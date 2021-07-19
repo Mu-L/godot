@@ -36,8 +36,8 @@
 
 /*************************************************************************/
 
-class TextParagraph : public Reference {
-	GDCLASS(TextParagraph, Reference);
+class TextParagraph : public RefCounted {
+	GDCLASS(TextParagraph, RefCounted);
 
 	RID dropcap_rid;
 	int dropcap_lines = 0;
@@ -115,6 +115,9 @@ public:
 	Vector2i get_line_range(int p_line) const;
 	float get_line_underline_position(int p_line) const;
 	float get_line_underline_thickness(int p_line) const;
+
+	int get_spacing_top() const;
+	int get_spacing_bottom() const;
 
 	Size2 get_dropcap_size() const;
 	int get_dropcap_lines() const;

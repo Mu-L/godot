@@ -35,8 +35,10 @@
 #include "editor/editor_settings.h"
 
 void TextureLayeredEditor::_gui_input(Ref<InputEvent> p_event) {
+	ERR_FAIL_COND(p_event.is_null());
+
 	Ref<InputEventMouseMotion> mm = p_event;
-	if (mm.is_valid() && mm->get_button_mask() & BUTTON_MASK_LEFT) {
+	if (mm.is_valid() && mm->get_button_mask() & MOUSE_BUTTON_MASK_LEFT) {
 		y_rot += -mm->get_relative().x * 0.01;
 		x_rot += mm->get_relative().y * 0.01;
 		_update_material();
@@ -56,7 +58,7 @@ void TextureLayeredEditor::_notification(int p_what) {
 	}
 
 	if (p_what == NOTIFICATION_DRAW) {
-		Ref<Texture2D> checkerboard = get_theme_icon("Checkerboard", "EditorIcons");
+		Ref<Texture2D> checkerboard = get_theme_icon(SNAME("Checkerboard"), SNAME("EditorIcons"));
 		Size2 size = get_size();
 
 		draw_texture_rect(checkerboard, Rect2(Point2(), size), true);
@@ -110,7 +112,7 @@ void TextureLayeredEditor::_make_shaders() {
 							 "  COLOR = textureLod(tex,vec3(UV,layer),0.0);\n"
 							 "}";
 
-	shaders[0].instance();
+	shaders[0].instantiate();
 	shaders[0]->set_code(shader_2d_array);
 
 	String shader_cube = ""
@@ -123,7 +125,7 @@ void TextureLayeredEditor::_make_shaders() {
 						 "  COLOR = textureLod(tex,n,0.0);\n"
 						 "}";
 
-	shaders[1].instance();
+	shaders[1].instantiate();
 	shaders[1]->set_code(shader_cube);
 
 	String shader_cube_array = ""
@@ -137,11 +139,11 @@ void TextureLayeredEditor::_make_shaders() {
 							   "  COLOR = textureLod(tex,vec4(n,layer),0.0);\n"
 							   "}";
 
-	shaders[2].instance();
+	shaders[2].instantiate();
 	shaders[2]->set_code(shader_cube_array);
 
 	for (int i = 0; i < 3; i++) {
-		materials[i].instance();
+		materials[i].instantiate();
 		materials[i]->set_shader(shaders[i]);
 	}
 }
@@ -269,6 +271,6 @@ void EditorInspectorPluginLayeredTexture::parse_begin(Object *p_object) {
 
 TextureLayeredEditorPlugin::TextureLayeredEditorPlugin(EditorNode *p_node) {
 	Ref<EditorInspectorPluginLayeredTexture> plugin;
-	plugin.instance();
+	plugin.instantiate();
 	add_inspector_plugin(plugin);
 }

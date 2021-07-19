@@ -43,7 +43,7 @@ void BoxContainer::_resort() {
 
 	Size2i new_size = get_size();
 
-	int sep = get_theme_constant("separation"); //,vertical?"VBoxContainer":"HBoxContainer");
+	int sep = get_theme_constant(SNAME("separation")); //,vertical?"VBoxContainer":"HBoxContainer");
 	bool rtl = is_layout_rtl();
 
 	bool first = true;
@@ -247,7 +247,7 @@ Size2 BoxContainer::get_minimum_size() const {
 	/* Calculate MINIMUM SIZE */
 
 	Size2i minimum;
-	int sep = get_theme_constant("separation"); //,vertical?"VBoxContainer":"HBoxContainer");
+	int sep = get_theme_constant(SNAME("separation")); //,vertical?"VBoxContainer":"HBoxContainer");
 
 	bool first = true;
 
@@ -313,7 +313,7 @@ BoxContainer::AlignMode BoxContainer::get_alignment() const {
 	return align;
 }
 
-void BoxContainer::add_spacer(bool p_begin) {
+Control *BoxContainer::add_spacer(bool p_begin) {
 	Control *c = memnew(Control);
 	c->set_mouse_filter(MOUSE_FILTER_PASS); //allow spacer to pass mouse events
 
@@ -327,6 +327,8 @@ void BoxContainer::add_spacer(bool p_begin) {
 	if (p_begin) {
 		move_child(c, 0);
 	}
+
+	return c;
 }
 
 BoxContainer::BoxContainer(bool p_vertical) {
@@ -347,6 +349,7 @@ void BoxContainer::_bind_methods() {
 
 MarginContainer *VBoxContainer::add_margin_child(const String &p_label, Control *p_control, bool p_expand) {
 	Label *l = memnew(Label);
+	l->set_theme_type_variation("HeaderSmall");
 	l->set_text(p_label);
 	add_child(l);
 	MarginContainer *mc = memnew(MarginContainer);

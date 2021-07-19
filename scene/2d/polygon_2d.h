@@ -55,9 +55,9 @@ class Polygon2D : public Node2D {
 	Size2 tex_scale = Vector2(1, 1);
 	Vector2 tex_ofs;
 	bool tex_tile = true;
-	float tex_rot = 0.0;
+	real_t tex_rot = 0.0;
 	bool invert = false;
-	float invert_border = 100.0;
+	real_t invert_border = 100.0;
 	bool antialiased = false;
 
 	Vector2 offset;
@@ -72,9 +72,12 @@ class Polygon2D : public Node2D {
 
 	void _skeleton_bone_setup_changed();
 
+	RID mesh;
+
 protected:
 	void _notification(int p_what);
 	static void _bind_methods();
+	void _validate_property(PropertyInfo &property) const override;
 
 public:
 #ifdef TOOLS_ENABLED
@@ -114,11 +117,8 @@ public:
 	void set_texture_offset(const Vector2 &p_offset);
 	Vector2 get_texture_offset() const;
 
-	void set_texture_rotation(float p_rot);
-	float get_texture_rotation() const;
-
-	void set_texture_rotation_degrees(float p_rot);
-	float get_texture_rotation_degrees() const;
+	void set_texture_rotation(real_t p_rot);
+	real_t get_texture_rotation() const;
 
 	void set_texture_scale(const Size2 &p_scale);
 	Size2 get_texture_scale() const;
@@ -129,8 +129,8 @@ public:
 	void set_antialiased(bool p_antialiased);
 	bool get_antialiased() const;
 
-	void set_invert_border(float p_invert_border);
-	float get_invert_border() const;
+	void set_invert_border(real_t p_invert_border);
+	real_t get_invert_border() const;
 
 	void set_offset(const Vector2 &p_offset);
 	Vector2 get_offset() const;
@@ -148,6 +148,7 @@ public:
 	NodePath get_skeleton() const;
 
 	Polygon2D();
+	~Polygon2D();
 };
 
 #endif // POLYGON_2D_H

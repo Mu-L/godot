@@ -39,6 +39,11 @@
 void FontData::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("load_resource", "filename", "base_size"), &FontData::load_resource, DEFVAL(16));
 	ClassDB::bind_method(D_METHOD("load_memory", "data", "type", "base_size"), &FontData::_load_memory, DEFVAL(16));
+	ClassDB::bind_method(D_METHOD("new_bitmap", "height", "ascent", "base_size"), &FontData::new_bitmap);
+
+	ClassDB::bind_method(D_METHOD("bitmap_add_texture", "texture"), &FontData::bitmap_add_texture);
+	ClassDB::bind_method(D_METHOD("bitmap_add_char", "char", "texture_idx", "rect", "align", "advance"), &FontData::bitmap_add_char);
+	ClassDB::bind_method(D_METHOD("bitmap_add_kerning_pair", "A", "B", "kerning"), &FontData::bitmap_add_kerning_pair);
 
 	ClassDB::bind_method(D_METHOD("set_data_path", "path"), &FontData::set_data_path);
 	ClassDB::bind_method(D_METHOD("get_data_path"), &FontData::get_data_path);
@@ -227,6 +232,34 @@ void FontData::load_memory(const uint8_t *p_data, size_t p_size, const String &p
 	path = TTR("(Memory: " + p_type.to_upper() + " @ 0x" + String::num_int64((uint64_t)p_data, 16, true) + ")");
 	base_size = TS->font_get_base_size(rid);
 	emit_changed();
+}
+
+void FontData::new_bitmap(float p_height, float p_ascent, int p_base_size) {
+	if (rid != RID()) {
+		TS->free(rid);
+	}
+	rid = TS->create_font_bitmap(p_height, p_ascent, p_base_size);
+	path = TTR("(Bitmap: " + String::num_int64(rid.get_id(), 16, true) + ")");
+	base_size = TS->font_get_base_size(rid);
+	emit_changed();
+}
+
+void FontData::bitmap_add_texture(const Ref<Texture> &p_texture) {
+	if (rid != RID()) {
+		TS->font_bitmap_add_texture(rid, p_texture);
+	}
+}
+
+void FontData::bitmap_add_char(char32_t p_char, int p_texture_idx, const Rect2 &p_rect, const Size2 &p_align, float p_advance) {
+	if (rid != RID()) {
+		TS->font_bitmap_add_char(rid, p_char, p_texture_idx, p_rect, p_align, p_advance);
+	}
+}
+
+void FontData::bitmap_add_kerning_pair(char32_t p_A, char32_t p_B, int p_kerning) {
+	if (rid != RID()) {
+		TS->font_bitmap_add_kerning_pair(rid, p_A, p_B, p_kerning);
+	}
 }
 
 void FontData::set_data_path(const String &p_path) {
@@ -780,7 +813,7 @@ Size2 Font::get_string_size(const String &p_text, int p_size) const {
 	if (cache.has(hash)) {
 		buffer = cache.get(hash);
 	} else {
-		buffer.instance();
+		buffer.instantiate();
 		int size = p_size <= 0 ? data[0]->get_base_size() : p_size;
 		buffer->add_string(p_text, Ref<Font>(this), size, Dictionary(), TranslationServer::get_singleton()->get_tool_locale());
 		cache.insert(hash, buffer);
@@ -805,7 +838,7 @@ Size2 Font::get_multiline_string_size(const String &p_text, float p_width, int p
 	if (cache_wrap.has(wrp_hash)) {
 		lines_buffer = cache_wrap.get(wrp_hash);
 	} else {
-		lines_buffer.instance();
+		lines_buffer.instantiate();
 		int size = p_size <= 0 ? data[0]->get_base_size() : p_size;
 		lines_buffer->add_string(p_text, Ref<Font>(this), size, Dictionary(), TranslationServer::get_singleton()->get_tool_locale());
 		lines_buffer->set_width(p_width);
@@ -837,7 +870,7 @@ void Font::draw_string(RID p_canvas_item, const Point2 &p_pos, const String &p_t
 	if (cache.has(hash)) {
 		buffer = cache.get(hash);
 	} else {
-		buffer.instance();
+		buffer.instantiate();
 		int size = p_size <= 0 ? data[0]->get_base_size() : p_size;
 		buffer->add_string(p_text, Ref<Font>(this), size, Dictionary(), TranslationServer::get_singleton()->get_tool_locale());
 		cache.insert(hash, buffer);
@@ -872,7 +905,7 @@ void Font::draw_multiline_string(RID p_canvas_item, const Point2 &p_pos, const S
 	if (cache_wrap.has(wrp_hash)) {
 		lines_buffer = cache_wrap.get(wrp_hash);
 	} else {
-		lines_buffer.instance();
+		lines_buffer.instantiate();
 		int size = p_size <= 0 ? data[0]->get_base_size() : p_size;
 		lines_buffer->add_string(p_text, Ref<Font>(this), size, Dictionary(), TranslationServer::get_singleton()->get_tool_locale());
 		lines_buffer->set_width(p_width);
@@ -1008,7 +1041,7 @@ RES ResourceFormatLoaderFont::load(const String &p_path, const String &p_origina
 	}
 
 	Ref<FontData> dfont;
-	dfont.instance();
+	dfont.instantiate();
 	dfont->load_resource(p_path);
 
 	if (r_error) {
@@ -1063,11 +1096,11 @@ RES ResourceFormatLoaderCompatFont::load(const String &p_path, const String &p_o
 	}
 
 	Ref<FontData> dfont;
-	dfont.instance();
+	dfont.instantiate();
 	dfont->load_resource(p_path);
 
 	Ref<Font> font;
-	font.instance();
+	font.instantiate();
 	font->add_data(dfont);
 
 	if (r_error) {

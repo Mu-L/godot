@@ -62,7 +62,7 @@ void JoypadLinux::Joypad::reset() {
 	dpad = 0;
 	fd = -1;
 
-	Input::JoyAxis jx;
+	Input::JoyAxisValue jx;
 	jx.min = -1;
 	jx.value = 0.0f;
 	for (int i = 0; i < MAX_ABS; i++) {
@@ -178,17 +178,18 @@ void JoypadLinux::monitor_joypads(udev *p_udev) {
 			   select() ensured that this will not block. */
 			dev = udev_monitor_receive_device(mon);
 
-			if (dev && udev_device_get_devnode(dev) != 0) {
+			if (dev && udev_device_get_devnode(dev) != nullptr) {
 				MutexLock lock(joy_mutex);
 				String action = udev_device_get_action(dev);
 				const char *devnode = udev_device_get_devnode(dev);
 				if (devnode) {
 					String devnode_str = devnode;
 					if (devnode_str.find(ignore_str) == -1) {
-						if (action == "add")
+						if (action == "add") {
 							open_joypad(devnode);
-						else if (String(action) == "remove")
+						} else if (String(action) == "remove") {
 							close_joypad(get_joy_from_path(devnode));
+						}
 					}
 				}
 
@@ -212,7 +213,7 @@ void JoypadLinux::monitor_joypads() {
 				struct dirent *current;
 				char fname[64];
 
-				while ((current = readdir(input_directory)) != NULL) {
+				while ((current = readdir(input_directory)) != nullptr) {
 					if (strncmp(current->d_name, "event", 5) != 0) {
 						continue;
 					}
@@ -428,10 +429,10 @@ void JoypadLinux::joypad_vibration_stop(int p_id, uint64_t p_timestamp) {
 	joy.ff_effect_timestamp = p_timestamp;
 }
 
-Input::JoyAxis JoypadLinux::axis_correct(const input_absinfo *p_abs, int p_value) const {
+Input::JoyAxisValue JoypadLinux::axis_correct(const input_absinfo *p_abs, int p_value) const {
 	int min = p_abs->minimum;
 	int max = p_abs->maximum;
-	Input::JoyAxis jx;
+	Input::JoyAxisValue jx;
 
 	if (min < 0) {
 		jx.min = -1;
@@ -474,7 +475,7 @@ void JoypadLinux::process_joypads() {
 
 				switch (ev.type) {
 					case EV_KEY:
-						input->joy_button(i, joy->key_map[ev.code], ev.value);
+						input->joy_button(i, (JoyButton)joy->key_map[ev.code], ev.value);
 						break;
 
 					case EV_ABS:
@@ -483,29 +484,29 @@ void JoypadLinux::process_joypads() {
 							case ABS_HAT0X:
 								if (ev.value != 0) {
 									if (ev.value < 0) {
-										joy->dpad = (joy->dpad | Input::HAT_MASK_LEFT) & ~Input::HAT_MASK_RIGHT;
+										joy->dpad = (HatMask)((joy->dpad | HatMask::HAT_MASK_LEFT) & ~HatMask::HAT_MASK_RIGHT);
 									} else {
-										joy->dpad = (joy->dpad | Input::HAT_MASK_RIGHT) & ~Input::HAT_MASK_LEFT;
+										joy->dpad = (HatMask)((joy->dpad | HatMask::HAT_MASK_RIGHT) & ~HatMask::HAT_MASK_LEFT);
 									}
 								} else {
-									joy->dpad &= ~(Input::HAT_MASK_LEFT | Input::HAT_MASK_RIGHT);
+									joy->dpad &= ~(HatMask::HAT_MASK_LEFT | HatMask::HAT_MASK_RIGHT);
 								}
 
-								input->joy_hat(i, joy->dpad);
+								input->joy_hat(i, (HatMask)joy->dpad);
 								break;
 
 							case ABS_HAT0Y:
 								if (ev.value != 0) {
 									if (ev.value < 0) {
-										joy->dpad = (joy->dpad | Input::HAT_MASK_UP) & ~Input::HAT_MASK_DOWN;
+										joy->dpad = (HatMask)((joy->dpad | HatMask::HAT_MASK_UP) & ~HatMask::HAT_MASK_DOWN);
 									} else {
-										joy->dpad = (joy->dpad | Input::HAT_MASK_DOWN) & ~Input::HAT_MASK_UP;
+										joy->dpad = (HatMask)((joy->dpad | HatMask::HAT_MASK_DOWN) & ~HatMask::HAT_MASK_UP);
 									}
 								} else {
-									joy->dpad &= ~(Input::HAT_MASK_UP | Input::HAT_MASK_DOWN);
+									joy->dpad &= ~(HatMask::HAT_MASK_UP | HatMask::HAT_MASK_DOWN);
 								}
 
-								input->joy_hat(i, joy->dpad);
+								input->joy_hat(i, (HatMask)joy->dpad);
 								break;
 
 							default:
@@ -513,7 +514,7 @@ void JoypadLinux::process_joypads() {
 									return;
 								}
 								if (joy->abs_map[ev.code] != -1 && joy->abs_info[ev.code]) {
-									Input::JoyAxis value = axis_correct(joy->abs_info[ev.code], ev.value);
+									Input::JoyAxisValue value = axis_correct(joy->abs_info[ev.code], ev.value);
 									joy->curr_axis[joy->abs_map[ev.code]] = value;
 								}
 								break;
@@ -525,7 +526,7 @@ void JoypadLinux::process_joypads() {
 		for (int j = 0; j < MAX_ABS; j++) {
 			int index = joy->abs_map[j];
 			if (index != -1) {
-				input->joy_axis(i, index, joy->curr_axis[index]);
+				input->joy_axis(i, (JoyAxis)index, joy->curr_axis[index]);
 			}
 		}
 		if (len == 0 || (len < 0 && errno != EAGAIN)) {

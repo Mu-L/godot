@@ -36,6 +36,7 @@
 #if !defined(NO_THREADS)
 
 #include <atomic>
+#include <type_traits>
 
 // Design goals for these classes:
 // - No automatic conversions or arithmetic operators,
@@ -249,7 +250,7 @@ public:
 	}
 
 	_ALWAYS_INLINE_ T conditional_increment() {
-		if (value != 0) {
+		if (value == 0) {
 			return 0;
 		} else {
 			return ++value;

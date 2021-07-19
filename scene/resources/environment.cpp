@@ -441,6 +441,7 @@ void Environment::_update_ssao() {
 void Environment::set_sdfgi_enabled(bool p_enabled) {
 	sdfgi_enabled = p_enabled;
 	_update_sdfgi();
+	notify_property_list_changed();
 }
 
 bool Environment::is_sdfgi_enabled() const {
@@ -983,6 +984,7 @@ void Environment::_validate_property(PropertyInfo &property) const {
 		"auto_exposure_",
 		"ss_reflections_",
 		"ssao_",
+		"sdfgi_",
 		"glow_",
 		"adjustment_",
 		nullptr
@@ -1327,7 +1329,7 @@ void Environment::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "volumetric_fog_density", PROPERTY_HINT_RANGE, "0,1,0.0001,or_greater"), "set_volumetric_fog_density", "get_volumetric_fog_density");
 	ADD_PROPERTY(PropertyInfo(Variant::COLOR, "volumetric_fog_light", PROPERTY_HINT_COLOR_NO_ALPHA), "set_volumetric_fog_light", "get_volumetric_fog_light");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "volumetric_fog_light_energy", PROPERTY_HINT_RANGE, "0,1024,0.01,or_greater"), "set_volumetric_fog_light_energy", "get_volumetric_fog_light_energy");
-	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "volumetric_fog_gi_inject", PROPERTY_HINT_EXP_RANGE, "0.00,16,0.01"), "set_volumetric_fog_gi_inject", "get_volumetric_fog_gi_inject");
+	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "volumetric_fog_gi_inject", PROPERTY_HINT_RANGE, "0.00,16,0.01,exp"), "set_volumetric_fog_gi_inject", "get_volumetric_fog_gi_inject");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "volumetric_fog_length", PROPERTY_HINT_RANGE, "0,1024,0.01,or_greater"), "set_volumetric_fog_length", "get_volumetric_fog_length");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "volumetric_fog_detail_spread", PROPERTY_HINT_EXP_EASING, "0.01,16,0.01"), "set_volumetric_fog_detail_spread", "get_volumetric_fog_detail_spread");
 	ADD_SUBGROUP("Temporal Reprojection", "volumetric_fog_temporal_reprojection_");

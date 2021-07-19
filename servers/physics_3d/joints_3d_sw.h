@@ -35,9 +35,14 @@
 #include "constraint_3d_sw.h"
 
 class Joint3DSW : public Constraint3DSW {
+protected:
+	bool dynamic_A = false;
+	bool dynamic_B = false;
+
 public:
-	virtual bool setup(real_t p_step) { return false; }
-	virtual void solve(real_t p_step) {}
+	virtual bool setup(real_t p_step) override { return false; }
+	virtual bool pre_solve(real_t p_step) override { return true; }
+	virtual void solve(real_t p_step) override {}
 
 	void copy_settings_from(Joint3DSW *p_joint) {
 		set_self(p_joint->get_self());
@@ -48,6 +53,15 @@ public:
 	virtual PhysicsServer3D::JointType get_type() const { return PhysicsServer3D::JOINT_TYPE_MAX; }
 	_FORCE_INLINE_ Joint3DSW(Body3DSW **p_body_ptr = nullptr, int p_body_count = 0) :
 			Constraint3DSW(p_body_ptr, p_body_count) {
+	}
+
+	virtual ~Joint3DSW() {
+		for (int i = 0; i < get_body_count(); i++) {
+			Body3DSW *body = get_body_ptr()[i];
+			if (body) {
+				body->remove_constraint(this);
+			}
+		}
 	}
 };
 

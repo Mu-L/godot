@@ -45,6 +45,7 @@ void InputMap::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("erase_action", "action"), &InputMap::erase_action);
 
 	ClassDB::bind_method(D_METHOD("action_set_deadzone", "action", "deadzone"), &InputMap::action_set_deadzone);
+	ClassDB::bind_method(D_METHOD("action_get_deadzone", "action"), &InputMap::action_get_deadzone);
 	ClassDB::bind_method(D_METHOD("action_add_event", "action", "event"), &InputMap::action_add_event);
 	ClassDB::bind_method(D_METHOD("action_has_event", "action", "event"), &InputMap::action_has_event);
 	ClassDB::bind_method(D_METHOD("action_erase_event", "action", "event"), &InputMap::action_erase_event);
@@ -54,8 +55,36 @@ void InputMap::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("load_from_project_settings"), &InputMap::load_from_project_settings);
 }
 
+/**
+ * Returns an nonexistent action error message with a suggestion of the closest
+ * matching action name (if possible).
+ */
+String InputMap::_suggest_actions(const StringName &p_action) const {
+	List<StringName> actions = get_actions();
+	StringName closest_action;
+	float closest_similarity = 0.0;
+
+	// Find the most action with the most similar name.
+	for (List<StringName>::Element *E = actions.front(); E; E = E->next()) {
+		const float similarity = String(E->get()).similarity(p_action);
+
+		if (similarity > closest_similarity) {
+			closest_action = E->get();
+			closest_similarity = similarity;
+		}
+	}
+
+	String error_message = vformat("The InputMap action \"%s\" doesn't exist.", p_action);
+
+	if (closest_similarity >= 0.4) {
+		// Only include a suggestion in the error message if it's similar enough.
+		error_message += vformat(" Did you mean \"%s\"?", closest_action);
+	}
+	return error_message;
+}
+
 void InputMap::add_action(const StringName &p_action, float p_deadzone) {
-	ERR_FAIL_COND_MSG(input_map.has(p_action), "InputMap already has action '" + String(p_action) + "'.");
+	ERR_FAIL_COND_MSG(input_map.has(p_action), "InputMap already has action \"" + String(p_action) + "\".");
 	input_map[p_action] = Action();
 	static int last_id = 1;
 	input_map[p_action].id = last_id;
@@ -64,7 +93,8 @@ void InputMap::add_action(const StringName &p_action, float p_deadzone) {
 }
 
 void InputMap::erase_action(const StringName &p_action) {
-	ERR_FAIL_COND_MSG(!input_map.has(p_action), "Request for nonexistent InputMap action '" + String(p_action) + "'.");
+	ERR_FAIL_COND_MSG(!input_map.has(p_action), _suggest_actions(p_action));
+
 	input_map.erase(p_action);
 }
 
@@ -101,12 +131,9 @@ List<Ref<InputEvent>>::Element *InputMap::_find_event(Action &p_action, const Re
 	for (List<Ref<InputEvent>>::Element *E = p_action.inputs.front(); E; E = E->next()) {
 		const Ref<InputEvent> e = E->get();
 
-		//if (e.type != Ref<InputEvent>::KEY && e.device != p_event.device) -- unsure about the KEY comparison, why is this here?
-		//	continue;
-
 		int device = e->get_device();
 		if (device == ALL_DEVICES || device == p_event->get_device()) {
-			if (p_exact_match && e->shortcut_match(p_event)) {
+			if (p_exact_match && e->is_match(p_event, true)) {
 				return E;
 			} else if (!p_exact_match && e->action_match(p_event, p_pressed, p_strength, p_raw_strength, p_action.deadzone)) {
 				return E;
@@ -122,34 +149,34 @@ bool InputMap::has_action(const StringName &p_action) const {
 }
 
 float InputMap::action_get_deadzone(const StringName &p_action) {
-	ERR_FAIL_COND_V_MSG(!input_map.has(p_action), 0.0f, "Request for nonexistent InputMap action '" + String(p_action) + "'.");
+	ERR_FAIL_COND_V_MSG(!input_map.has(p_action), 0.0f, _suggest_actions(p_action));
 
 	return input_map[p_action].deadzone;
 }
 
 void InputMap::action_set_deadzone(const StringName &p_action, float p_deadzone) {
-	ERR_FAIL_COND_MSG(!input_map.has(p_action), "Request for nonexistent InputMap action '" + String(p_action) + "'.");
+	ERR_FAIL_COND_MSG(!input_map.has(p_action), _suggest_actions(p_action));
 
 	input_map[p_action].deadzone = p_deadzone;
 }
 
 void InputMap::action_add_event(const StringName &p_action, const Ref<InputEvent> &p_event) {
 	ERR_FAIL_COND_MSG(p_event.is_null(), "It's not a reference to a valid InputEvent object.");
-	ERR_FAIL_COND_MSG(!input_map.has(p_action), "Request for nonexistent InputMap action '" + String(p_action) + "'.");
+	ERR_FAIL_COND_MSG(!input_map.has(p_action), _suggest_actions(p_action));
 	if (_find_event(input_map[p_action], p_event, true)) {
-		return; // Already addded.
+		return; // Already added.
 	}
 
 	input_map[p_action].inputs.push_back(p_event);
 }
 
 bool InputMap::action_has_event(const StringName &p_action, const Ref<InputEvent> &p_event) {
-	ERR_FAIL_COND_V_MSG(!input_map.has(p_action), false, "Request for nonexistent InputMap action '" + String(p_action) + "'.");
+	ERR_FAIL_COND_V_MSG(!input_map.has(p_action), false, _suggest_actions(p_action));
 	return (_find_event(input_map[p_action], p_event, true) != nullptr);
 }
 
 void InputMap::action_erase_event(const StringName &p_action, const Ref<InputEvent> &p_event) {
-	ERR_FAIL_COND_MSG(!input_map.has(p_action), "Request for nonexistent InputMap action '" + String(p_action) + "'.");
+	ERR_FAIL_COND_MSG(!input_map.has(p_action), _suggest_actions(p_action));
 
 	List<Ref<InputEvent>>::Element *E = _find_event(input_map[p_action], p_event, true);
 	if (E) {
@@ -161,7 +188,7 @@ void InputMap::action_erase_event(const StringName &p_action, const Ref<InputEve
 }
 
 void InputMap::action_erase_events(const StringName &p_action) {
-	ERR_FAIL_COND_MSG(!input_map.has(p_action), "Request for nonexistent InputMap action '" + String(p_action) + "'.");
+	ERR_FAIL_COND_MSG(!input_map.has(p_action), _suggest_actions(p_action));
 
 	input_map[p_action].inputs.clear();
 }
@@ -193,7 +220,7 @@ bool InputMap::event_is_action(const Ref<InputEvent> &p_event, const StringName 
 
 bool InputMap::event_get_action_status(const Ref<InputEvent> &p_event, const StringName &p_action, bool p_exact_match, bool *p_pressed, float *p_strength, float *p_raw_strength) const {
 	OrderedHashMap<StringName, Action>::Element E = input_map.find(p_action);
-	ERR_FAIL_COND_V_MSG(!E, false, "Request for nonexistent InputMap action '" + String(p_action) + "'.");
+	ERR_FAIL_COND_V_MSG(!E, false, _suggest_actions(p_action));
 
 	Ref<InputEventAction> input_event_action = p_event;
 	if (input_event_action.is_valid()) {
@@ -324,7 +351,9 @@ static const _BuiltinActionDisplayName _builtin_action_display_names[] = {
     { "ui_text_scroll_down",                           TTRC("Scroll Down") },
     { "ui_text_scroll_down.OSX",                       TTRC("Scroll Down") },
     { "ui_text_select_all",                            TTRC("Select All") },
+    { "ui_text_select_word_under_caret",               TTRC("Select Word Under Caret") },
     { "ui_text_toggle_insert_mode",                    TTRC("Toggle Insert Mode") },
+    { "ui_text_submit",                                TTRC("Text Submitted") },
     { "ui_graph_duplicate",                            TTRC("Duplicate Nodes") },
     { "ui_graph_delete",                               TTRC("Delete Nodes") },
     { "ui_filedialog_up_one_level",                    TTRC("Go Up One Level") },
@@ -444,8 +473,13 @@ const OrderedHashMap<String, List<Ref<InputEvent>>> &InputMap::get_builtins() {
 	default_builtin_cache.insert("ui_text_completion_query", inputs);
 
 	inputs = List<Ref<InputEvent>>();
-	inputs.push_back(InputEventKey::create_reference(KEY_TAB));
+	inputs.push_back(InputEventKey::create_reference(KEY_ENTER));
+	inputs.push_back(InputEventKey::create_reference(KEY_KP_ENTER));
 	default_builtin_cache.insert("ui_text_completion_accept", inputs);
+
+	inputs = List<Ref<InputEvent>>();
+	inputs.push_back(InputEventKey::create_reference(KEY_TAB));
+	default_builtin_cache.insert("ui_text_completion_replace", inputs);
 
 	// Newlines
 	inputs = List<Ref<InputEvent>>();
@@ -476,6 +510,7 @@ const OrderedHashMap<String, List<Ref<InputEvent>>> &InputMap::get_builtins() {
 	// Text Backspace and Delete
 	inputs = List<Ref<InputEvent>>();
 	inputs.push_back(InputEventKey::create_reference(KEY_BACKSPACE));
+	inputs.push_back(InputEventKey::create_reference(KEY_BACKSPACE | KEY_MASK_SHIFT));
 	default_builtin_cache.insert("ui_text_backspace", inputs);
 
 	inputs = List<Ref<InputEvent>>();
@@ -567,6 +602,7 @@ const OrderedHashMap<String, List<Ref<InputEvent>>> &InputMap::get_builtins() {
 	inputs.push_back(InputEventKey::create_reference(KEY_E | KEY_MASK_CTRL));
 	inputs.push_back(InputEventKey::create_reference(KEY_RIGHT | KEY_MASK_CMD));
 	default_builtin_cache.insert("ui_text_caret_line_end.OSX", inputs);
+
 	// Text Caret Movement Page Up/Down
 
 	inputs = List<Ref<InputEvent>>();
@@ -620,12 +656,21 @@ const OrderedHashMap<String, List<Ref<InputEvent>>> &InputMap::get_builtins() {
 	default_builtin_cache.insert("ui_text_select_all", inputs);
 
 	inputs = List<Ref<InputEvent>>();
+	inputs.push_back(InputEventKey::create_reference(KEY_D | KEY_MASK_CMD));
+	default_builtin_cache.insert("ui_text_select_word_under_caret", inputs);
+
+	inputs = List<Ref<InputEvent>>();
 	inputs.push_back(InputEventKey::create_reference(KEY_INSERT));
 	default_builtin_cache.insert("ui_text_toggle_insert_mode", inputs);
 
 	inputs = List<Ref<InputEvent>>();
 	inputs.push_back(InputEventKey::create_reference(KEY_MENU));
 	default_builtin_cache.insert("ui_menu", inputs);
+
+	inputs = List<Ref<InputEvent>>();
+	inputs.push_back(InputEventKey::create_reference(KEY_ENTER));
+	inputs.push_back(InputEventKey::create_reference(KEY_KP_ENTER));
+	default_builtin_cache.insert("ui_text_submit", inputs);
 
 	// ///// UI Graph Shortcuts /////
 
@@ -694,7 +739,7 @@ void InputMap::load_default() {
 
 			// For the editor, only add keyboard actions.
 			if (iek.is_valid()) {
-				action_add_event(fullname, I->get());
+				action_add_event(name, I->get());
 			}
 		}
 	}

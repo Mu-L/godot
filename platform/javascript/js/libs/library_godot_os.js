@@ -59,6 +59,8 @@ const GodotConfig = {
 		canvas: null,
 		locale: 'en',
 		canvas_resize_policy: 2, // Adaptive
+		virtual_keyboard: false,
+		persistent_drops: false,
 		on_execute: null,
 		on_exit: null,
 
@@ -66,8 +68,13 @@ const GodotConfig = {
 			GodotConfig.canvas_resize_policy = p_opts['canvasResizePolicy'];
 			GodotConfig.canvas = p_opts['canvas'];
 			GodotConfig.locale = p_opts['locale'] || GodotConfig.locale;
+			GodotConfig.virtual_keyboard = p_opts['virtualKeyboard'];
+			GodotConfig.persistent_drops = !!p_opts['persistentDrops'];
 			GodotConfig.on_execute = p_opts['onExecute'];
 			GodotConfig.on_exit = p_opts['onExit'];
+			if (p_opts['focusCanvas']) {
+				GodotConfig.canvas.focus();
+			}
 		},
 
 		locate_file: function (file) {
@@ -77,6 +84,8 @@ const GodotConfig = {
 			GodotConfig.canvas = null;
 			GodotConfig.locale = 'en';
 			GodotConfig.canvas_resize_policy = 2;
+			GodotConfig.virtual_keyboard = false;
+			GodotConfig.persistent_drops = false;
 			GodotConfig.on_execute = null;
 			GodotConfig.on_exit = null;
 		},
@@ -297,6 +306,23 @@ const GodotOS = {
 	godot_js_os_hw_concurrency_get__sig: 'i',
 	godot_js_os_hw_concurrency_get: function () {
 		return navigator.hardwareConcurrency || 1;
+	},
+
+	godot_js_os_download_buffer__sig: 'viiii',
+	godot_js_os_download_buffer: function (p_ptr, p_size, p_name, p_mime) {
+		const buf = GodotRuntime.heapSlice(HEAP8, p_ptr, p_size);
+		const name = GodotRuntime.parseString(p_name);
+		const mime = GodotRuntime.parseString(p_mime);
+		const blob = new Blob([buf], { type: mime });
+		const url = window.URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = name;
+		a.style.display = 'none';
+		document.body.appendChild(a);
+		a.click();
+		a.remove();
+		window.URL.revokeObjectURL(url);
 	},
 };
 

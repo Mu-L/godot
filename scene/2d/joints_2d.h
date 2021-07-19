@@ -51,7 +51,7 @@ class Joint2D : public Node2D {
 
 protected:
 	void _disconnect_signals();
-	void _body_exit_tree(const ObjectID &p_body_id);
+	void _body_exit_tree();
 	void _update_joint(bool p_only_free = false);
 
 	void _notification(int p_what);
@@ -62,7 +62,7 @@ protected:
 	_FORCE_INLINE_ bool is_configured() const { return configured; }
 
 public:
-	virtual String get_configuration_warning() const override;
+	virtual TypedArray<String> get_configuration_warnings() const override;
 
 	void set_node_a(const NodePath &p_node_a);
 	NodePath get_node_a() const;

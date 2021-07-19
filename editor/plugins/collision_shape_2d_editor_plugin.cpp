@@ -325,7 +325,7 @@ bool CollisionShape2DEditor::forward_canvas_gui_input(const Ref<InputEvent> &p_e
 	if (mb.is_valid()) {
 		Vector2 gpoint = mb->get_position();
 
-		if (mb->get_button_index() == BUTTON_LEFT) {
+		if (mb->get_button_index() == MOUSE_BUTTON_LEFT) {
 			if (mb->is_pressed()) {
 				for (int i = 0; i < handles.size(); i++) {
 					if (xform.xform(handles[i]).distance_to(gpoint) < 8) {
@@ -430,7 +430,7 @@ void CollisionShape2DEditor::forward_canvas_draw_over_viewport(Control *p_overla
 
 	Transform2D gt = canvas_item_editor->get_canvas_transform() * node->get_global_transform();
 
-	Ref<Texture2D> h = get_theme_icon("EditorHandle", "EditorIcons");
+	Ref<Texture2D> h = get_theme_icon(SNAME("EditorHandle"), SNAME("EditorIcons"));
 	Vector2 size = h->get_size() * 0.5;
 
 	handles.clear();

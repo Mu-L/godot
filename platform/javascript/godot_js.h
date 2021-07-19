@@ -71,6 +71,7 @@ extern int godot_js_display_fullscreen_exit();
 extern void godot_js_display_compute_position(int p_x, int p_y, int32_t *r_x, int32_t *r_y);
 extern void godot_js_display_window_title_set(const char *p_text);
 extern void godot_js_display_window_icon_set(const uint8_t *p_ptr, int p_len);
+extern int godot_js_display_has_webgl(int p_version);
 
 // Display clipboard
 extern int godot_js_display_clipboard_set(const char *p_text);
@@ -83,7 +84,7 @@ extern void godot_js_display_cursor_set_custom_shape(const char *p_shape, const 
 extern void godot_js_display_cursor_set_visible(int p_visible);
 
 // Display gamepad
-extern char *godot_js_display_gamepad_cb(void (*p_on_change)(int p_index, int p_connected, const char *p_id, const char *p_guid));
+extern void godot_js_display_gamepad_cb(void (*p_on_change)(int p_index, int p_connected, const char *p_id, const char *p_guid));
 extern int godot_js_display_gamepad_sample();
 extern int godot_js_display_gamepad_sample_count();
 extern int godot_js_display_gamepad_sample_get(int p_idx, float r_btns[16], int32_t *r_btns_num, float r_axes[10], int32_t *r_axes_num, int32_t *r_standard);
@@ -92,7 +93,14 @@ extern int godot_js_display_gamepad_sample_get(int p_idx, float r_btns[16], int3
 extern void godot_js_display_notification_cb(void (*p_callback)(int p_notification), int p_enter, int p_exit, int p_in, int p_out);
 extern void godot_js_display_paste_cb(void (*p_callback)(const char *p_text));
 extern void godot_js_display_drop_files_cb(void (*p_callback)(char **p_filev, int p_filec));
-extern void godot_js_display_setup_canvas(int p_width, int p_height, int p_fullscreen);
+extern void godot_js_display_setup_canvas(int p_width, int p_height, int p_fullscreen, int p_hidpi);
+
+// Display Virtual Keyboard
+extern int godot_js_display_vk_available();
+extern void godot_js_display_vk_cb(void (*p_input)(const char *p_text, int p_cursor));
+extern void godot_js_display_vk_show(const char *p_text, int p_multiline, int p_start, int p_end);
+extern void godot_js_display_vk_hide();
+
 #ifdef __cplusplus
 }
 #endif

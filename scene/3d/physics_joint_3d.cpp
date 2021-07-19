@@ -46,24 +46,15 @@ void Joint3D::_disconnect_signals() {
 	}
 }
 
-void Joint3D::_body_exit_tree(const ObjectID &p_body_id) {
+void Joint3D::_body_exit_tree() {
 	_disconnect_signals();
-	Object *object = ObjectDB::get_instance(p_body_id);
-	PhysicsBody3D *body = Object::cast_to<PhysicsBody3D>(object);
-	ERR_FAIL_NULL(body);
-	RID body_rid = body->get_rid();
-	if (ba == body_rid) {
-		a = NodePath();
-	}
-	if (bb == body_rid) {
-		b = NodePath();
-	}
-	_update_joint();
+	_update_joint(true);
 }
 
 void Joint3D::_update_joint(bool p_only_free) {
 	if (ba.is_valid() && bb.is_valid()) {
 		PhysicsServer3D::get_singleton()->body_remove_collision_exception(ba, bb);
+		PhysicsServer3D::get_singleton()->body_remove_collision_exception(bb, ba);
 	}
 
 	ba = RID();
@@ -74,6 +65,7 @@ void Joint3D::_update_joint(bool p_only_free) {
 	if (p_only_free || !is_inside_tree()) {
 		PhysicsServer3D::get_singleton()->joint_clear(joint);
 		warning = String();
+		update_configuration_warnings();
 		return;
 	}
 
@@ -84,42 +76,25 @@ void Joint3D::_update_joint(bool p_only_free) {
 	PhysicsBody3D *body_b = Object::cast_to<PhysicsBody3D>(node_b);
 
 	if (node_a && !body_a && node_b && !body_b) {
-		PhysicsServer3D::get_singleton()->joint_clear(joint);
 		warning = TTR("Node A and Node B must be PhysicsBody3Ds");
-		update_configuration_warning();
-		return;
-	}
-
-	if (node_a && !body_a) {
-		PhysicsServer3D::get_singleton()->joint_clear(joint);
+	} else if (node_a && !body_a) {
 		warning = TTR("Node A must be a PhysicsBody3D");
-		update_configuration_warning();
-		return;
-	}
-
-	if (node_b && !body_b) {
-		PhysicsServer3D::get_singleton()->joint_clear(joint);
+	} else if (node_b && !body_b) {
 		warning = TTR("Node B must be a PhysicsBody3D");
-		update_configuration_warning();
-		return;
-	}
-
-	if (!body_a && !body_b) {
-		PhysicsServer3D::get_singleton()->joint_clear(joint);
+	} else if (!body_a && !body_b) {
 		warning = TTR("Joint is not connected to any PhysicsBody3Ds");
-		update_configuration_warning();
-		return;
-	}
-
-	if (body_a == body_b) {
-		PhysicsServer3D::get_singleton()->joint_clear(joint);
+	} else if (body_a == body_b) {
 		warning = TTR("Node A and Node B must be different PhysicsBody3Ds");
-		update_configuration_warning();
-		return;
+	} else {
+		warning = String();
 	}
 
-	warning = String();
-	update_configuration_warning();
+	update_configuration_warnings();
+
+	if (!warning.is_empty()) {
+		PhysicsServer3D::get_singleton()->joint_clear(joint);
+		return;
+	}
 
 	configured = true;
 
@@ -133,12 +108,12 @@ void Joint3D::_update_joint(bool p_only_free) {
 
 	if (body_a) {
 		ba = body_a->get_rid();
-		body_a->connect(SceneStringNames::get_singleton()->tree_exiting, callable_mp(this, &Joint3D::_body_exit_tree), make_binds(body_a->get_instance_id()));
+		body_a->connect(SceneStringNames::get_singleton()->tree_exiting, callable_mp(this, &Joint3D::_body_exit_tree));
 	}
 
 	if (body_b) {
 		bb = body_b->get_rid();
-		body_b->connect(SceneStringNames::get_singleton()->tree_exiting, callable_mp(this, &Joint3D::_body_exit_tree), make_binds(body_b->get_instance_id()));
+		body_b->connect(SceneStringNames::get_singleton()->tree_exiting, callable_mp(this, &Joint3D::_body_exit_tree));
 	}
 
 	PhysicsServer3D::get_singleton()->joint_disable_collisions_between_bodies(joint, exclude_from_collision);
@@ -215,17 +190,14 @@ bool Joint3D::get_exclude_nodes_from_collision() const {
 	return exclude_from_collision;
 }
 
-String Joint3D::get_configuration_warning() const {
-	String node_warning = Node3D::get_configuration_warning();
+TypedArray<String> Joint3D::get_configuration_warnings() const {
+	TypedArray<String> warnings = Node3D::get_configuration_warnings();
 
 	if (!warning.is_empty()) {
-		if (!node_warning.is_empty()) {
-			node_warning += "\n\n";
-		}
-		node_warning += warning;
+		warnings.push_back(warning);
 	}
 
-	return node_warning;
+	return warnings;
 }
 
 void Joint3D::_bind_methods() {
@@ -400,15 +372,15 @@ bool HingeJoint3D::get_flag(Flag p_flag) const {
 }
 
 void HingeJoint3D::_configure_joint(RID p_joint, PhysicsBody3D *body_a, PhysicsBody3D *body_b) {
-	Transform gt = get_global_transform();
-	Transform ainv = body_a->get_global_transform().affine_inverse();
+	Transform3D gt = get_global_transform();
+	Transform3D ainv = body_a->get_global_transform().affine_inverse();
 
-	Transform local_a = ainv * gt;
+	Transform3D local_a = ainv * gt;
 	local_a.orthonormalize();
-	Transform local_b = gt;
+	Transform3D local_b = gt;
 
 	if (body_b) {
-		Transform binv = body_b->get_global_transform().affine_inverse();
+		Transform3D binv = body_b->get_global_transform().affine_inverse();
 		local_b = binv * gt;
 	}
 
@@ -534,15 +506,15 @@ real_t SliderJoint3D::get_param(Param p_param) const {
 }
 
 void SliderJoint3D::_configure_joint(RID p_joint, PhysicsBody3D *body_a, PhysicsBody3D *body_b) {
-	Transform gt = get_global_transform();
-	Transform ainv = body_a->get_global_transform().affine_inverse();
+	Transform3D gt = get_global_transform();
+	Transform3D ainv = body_a->get_global_transform().affine_inverse();
 
-	Transform local_a = ainv * gt;
+	Transform3D local_a = ainv * gt;
 	local_a.orthonormalize();
-	Transform local_b = gt;
+	Transform3D local_b = gt;
 
 	if (body_b) {
-		Transform binv = body_b->get_global_transform().affine_inverse();
+		Transform3D binv = body_b->get_global_transform().affine_inverse();
 		local_b = binv * gt;
 	}
 
@@ -639,18 +611,18 @@ real_t ConeTwistJoint3D::get_param(Param p_param) const {
 }
 
 void ConeTwistJoint3D::_configure_joint(RID p_joint, PhysicsBody3D *body_a, PhysicsBody3D *body_b) {
-	Transform gt = get_global_transform();
+	Transform3D gt = get_global_transform();
 	//Vector3 cone_twistpos = gt.origin;
 	//Vector3 cone_twistdir = gt.basis.get_axis(2);
 
-	Transform ainv = body_a->get_global_transform().affine_inverse();
+	Transform3D ainv = body_a->get_global_transform().affine_inverse();
 
-	Transform local_a = ainv * gt;
+	Transform3D local_a = ainv * gt;
 	local_a.orthonormalize();
-	Transform local_b = gt;
+	Transform3D local_b = gt;
 
 	if (body_b) {
-		Transform binv = body_b->get_global_transform().affine_inverse();
+		Transform3D binv = body_b->get_global_transform().affine_inverse();
 		local_b = binv * gt;
 	}
 
@@ -964,18 +936,18 @@ bool Generic6DOFJoint3D::get_flag_z(Flag p_flag) const {
 }
 
 void Generic6DOFJoint3D::_configure_joint(RID p_joint, PhysicsBody3D *body_a, PhysicsBody3D *body_b) {
-	Transform gt = get_global_transform();
+	Transform3D gt = get_global_transform();
 	//Vector3 cone_twistpos = gt.origin;
 	//Vector3 cone_twistdir = gt.basis.get_axis(2);
 
-	Transform ainv = body_a->get_global_transform().affine_inverse();
+	Transform3D ainv = body_a->get_global_transform().affine_inverse();
 
-	Transform local_a = ainv * gt;
+	Transform3D local_a = ainv * gt;
 	local_a.orthonormalize();
-	Transform local_b = gt;
+	Transform3D local_b = gt;
 
 	if (body_b) {
-		Transform binv = body_b->get_global_transform().affine_inverse();
+		Transform3D binv = body_b->get_global_transform().affine_inverse();
 		local_b = binv * gt;
 	}
 

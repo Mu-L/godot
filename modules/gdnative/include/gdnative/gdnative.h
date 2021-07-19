@@ -53,7 +53,9 @@ extern "C" {
 #endif
 
 // This is for libraries *using* the header, NOT GODOT EXPOSING STUFF!!
-#ifdef _WIN32
+#ifdef __GNUC__
+#define GDN_EXPORT __attribute__((visibility("default")))
+#elif defined(_WIN32)
 #define GDN_EXPORT __declspec(dllexport)
 #else
 #define GDN_EXPORT
@@ -147,9 +149,9 @@ typedef void godot_object;
 
 #include <gdnative/plane.h>
 
-/////// Quat
+/////// Quaternion
 
-#include <gdnative/quat.h>
+#include <gdnative/quaternion.h>
 
 /////// AABB
 
@@ -159,9 +161,9 @@ typedef void godot_object;
 
 #include <gdnative/basis.h>
 
-/////// Transform
+/////// Transform3D
 
-#include <gdnative/transform.h>
+#include <gdnative/transform_3d.h>
 
 /////// Color
 

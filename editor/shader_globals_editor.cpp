@@ -66,7 +66,7 @@ class ShaderGlobalsEditorInterface : public Object {
 	GDCLASS(ShaderGlobalsEditorInterface, Object)
 
 	void _var_changed() {
-		emit_signal("var_changed");
+		emit_signal(SNAME("var_changed"));
 	}
 
 protected:
@@ -199,7 +199,7 @@ protected:
 					pinfo.type = Variant::TRANSFORM2D;
 				} break;
 				case RS::GLOBAL_VAR_TYPE_TRANSFORM: {
-					pinfo.type = Variant::TRANSFORM;
+					pinfo.type = Variant::TRANSFORM3D;
 				} break;
 				case RS::GLOBAL_VAR_TYPE_MAT4: {
 					pinfo.type = Variant::PACKED_INT32_ARRAY;
@@ -326,7 +326,7 @@ static Variant create_var(RS::GlobalVariableType p_type) {
 			return Transform2D();
 		}
 		case RS::GLOBAL_VAR_TYPE_TRANSFORM: {
-			return Transform();
+			return Transform3D();
 		}
 		case RS::GLOBAL_VAR_TYPE_MAT4: {
 			Vector<real_t> xform;
@@ -425,7 +425,7 @@ void ShaderGlobalsEditor::_variable_deleted(const String &p_variable) {
 }
 
 void ShaderGlobalsEditor::_changed() {
-	emit_signal("globals_changed");
+	emit_signal(SNAME("globals_changed"));
 	if (!interface->block_update) {
 		interface->notify_property_list_changed();
 	}
@@ -483,8 +483,5 @@ ShaderGlobalsEditor::ShaderGlobalsEditor() {
 }
 
 ShaderGlobalsEditor::~ShaderGlobalsEditor() {
-	if (is_visible_in_tree()) {
-		inspector->edit(nullptr);
-	}
 	memdelete(interface);
 }

@@ -193,8 +193,7 @@ ProceduralSkyMaterial::ProceduralSkyMaterial() {
 	code += "uniform float ground_energy = 1.0;\n\n";
 	code += "uniform float sun_angle_max = 1.74;\n";
 	code += "uniform float sun_curve : hint_range(0, 1) = 0.05;\n\n";
-	code += "const float PI = 3.1415926535897932384626433833;\n\n";
-	code += "void fragment() {\n";
+	code += "void sky() {\n";
 	code += "\tfloat v_angle = acos(clamp(EYEDIR.y, -1.0, 1.0));\n";
 	code += "\tfloat c = (1.0 - v_angle / (PI * 0.5));\n";
 	code += "\tvec3 sky = mix(sky_horizon_color.rgb, sky_top_color.rgb, clamp(1.0 - pow(1.0 - c, 1.0 / sky_curve), 0.0, 1.0));\n";
@@ -271,7 +270,8 @@ ProceduralSkyMaterial::~ProceduralSkyMaterial() {
 
 void PanoramaSkyMaterial::set_panorama(const Ref<Texture2D> &p_panorama) {
 	panorama = p_panorama;
-	RS::get_singleton()->material_set_param(_get_material(), "source_panorama", panorama);
+	RID tex_rid = p_panorama.is_valid() ? p_panorama->get_rid() : RID();
+	RS::get_singleton()->material_set_param(_get_material(), "source_panorama", tex_rid);
 }
 
 Ref<Texture2D> PanoramaSkyMaterial::get_panorama() const {
@@ -301,7 +301,7 @@ PanoramaSkyMaterial::PanoramaSkyMaterial() {
 	String code = "shader_type sky;\n\n";
 
 	code += "uniform sampler2D source_panorama : filter_linear;\n";
-	code += "void fragment() {\n";
+	code += "void sky() {\n";
 	code += "\tCOLOR = texture(source_panorama, SKY_COORDS).rgb;\n";
 	code += "}";
 
@@ -412,7 +412,8 @@ float PhysicalSkyMaterial::get_dither_strength() const {
 
 void PhysicalSkyMaterial::set_night_sky(const Ref<Texture2D> &p_night_sky) {
 	night_sky = p_night_sky;
-	RS::get_singleton()->material_set_param(_get_material(), "night_sky", night_sky);
+	RID tex_rid = p_night_sky.is_valid() ? p_night_sky->get_rid() : RID();
+	RS::get_singleton()->material_set_param(_get_material(), "night_sky", tex_rid);
 }
 
 Ref<Texture2D> PhysicalSkyMaterial::get_night_sky() const {
@@ -499,7 +500,6 @@ PhysicalSkyMaterial::PhysicalSkyMaterial() {
 
 	code += "uniform sampler2D night_sky : hint_black;";
 
-	code += "const float PI = 3.141592653589793238462643383279502884197169;\n";
 	code += "const vec3 UP = vec3( 0.0, 1.0, 0.0 );\n\n";
 
 	code += "// Sun constants\n";
@@ -521,7 +521,7 @@ PhysicalSkyMaterial::PhysicalSkyMaterial() {
 	code += "\treturn fract(p.x * p.y * p.z * (p.x + p.y + p.z));\n";
 	code += "}\n\n";
 
-	code += "void fragment() {\n";
+	code += "void sky() {\n";
 	code += "\tif (LIGHT0_ENABLED) {\n";
 	code += "\t\tfloat zenith_angle = clamp( dot(UP, normalize(LIGHT0_DIRECTION)), -1.0, 1.0 );\n";
 	code += "\t\tfloat sun_energy = max(0.0, 1.0 - exp(-((PI * 0.5) - acos(zenith_angle)))) * SUN_ENERGY * LIGHT0_ENERGY;\n";

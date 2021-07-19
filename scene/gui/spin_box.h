@@ -43,8 +43,9 @@ class SpinBox : public Range {
 
 	Timer *range_click_timer;
 	void _range_click_timeout();
+	void _release_mouse();
 
-	void _text_entered(const String &p_string);
+	void _text_submitted(const String &p_string);
 	virtual void _value_changed(double) override;
 	String prefix;
 	String suffix;

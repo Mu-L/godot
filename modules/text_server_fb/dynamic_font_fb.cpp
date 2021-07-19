@@ -65,7 +65,7 @@ DynamicFontDataFallback::DataAtSize *DynamicFontDataFallback::get_data_for_size(
 					ERR_FAIL_V_MSG(nullptr, "Cannot open font file '" + font_path + "'.");
 				}
 
-				size_t len = f->get_len();
+				uint64_t len = f->get_length();
 				font_mem_cache.resize(len);
 				f->get_buffer(font_mem_cache.ptrw(), len);
 				font_mem = font_mem_cache.ptr();
@@ -306,7 +306,7 @@ DynamicFontDataFallback::Character DynamicFontDataFallback::bitmap_to_character(
 			Ref<Image> img = memnew(Image(tex.texture_size, tex.texture_size, 0, require_format, tex.imgdata));
 
 			if (tex.texture.is_null()) {
-				tex.texture.instance();
+				tex.texture.instantiate();
 				tex.texture->create_from_image(img);
 			} else {
 				tex.texture->update(img); //update
@@ -678,6 +678,29 @@ Vector2 DynamicFontDataFallback::draw_glyph_outline(RID p_canvas, int p_size, in
 	}
 
 	return advance;
+}
+
+bool DynamicFontDataFallback::get_glyph_contours(int p_size, uint32_t p_index, Vector<Vector3> &r_points, Vector<int32_t> &r_contours, bool &r_orientation) const {
+	_THREAD_SAFE_METHOD_
+	DataAtSize *fds = const_cast<DynamicFontDataFallback *>(this)->get_data_for_size(p_size);
+	ERR_FAIL_COND_V(fds == nullptr, false);
+
+	int error = FT_Load_Glyph(fds->face, p_index, FT_LOAD_NO_BITMAP | (force_autohinter ? FT_LOAD_FORCE_AUTOHINT : 0));
+	ERR_FAIL_COND_V(error, false);
+
+	r_points.clear();
+	r_contours.clear();
+
+	float h = fds->ascent;
+	float scale = (1.0 / 64.0) / oversampling * fds->scale_color_font;
+	for (short i = 0; i < fds->face->glyph->outline.n_points; i++) {
+		r_points.push_back(Vector3(fds->face->glyph->outline.points[i].x * scale, h - fds->face->glyph->outline.points[i].y * scale, FT_CURVE_TAG(fds->face->glyph->outline.tags[i])));
+	}
+	for (short i = 0; i < fds->face->glyph->outline.n_contours; i++) {
+		r_contours.push_back(fds->face->glyph->outline.contours[i]);
+	}
+	r_orientation = (FT_Outline_Get_Orientation(&fds->face->glyph->outline) == FT_ORIENTATION_FILL_RIGHT);
+	return true;
 }
 
 DynamicFontDataFallback::~DynamicFontDataFallback() {

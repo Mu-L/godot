@@ -92,6 +92,8 @@ GradientEdit::~GradientEdit() {
 }
 
 void GradientEdit::_gui_input(const Ref<InputEvent> &p_event) {
+	ERR_FAIL_COND(p_event.is_null());
+
 	Ref<InputEventKey> k = p_event;
 
 	if (k.is_valid() && k->is_pressed() && k->get_keycode() == KEY_DELETE && grabbed != -1) {
@@ -99,13 +101,13 @@ void GradientEdit::_gui_input(const Ref<InputEvent> &p_event) {
 		grabbed = -1;
 		grabbing = false;
 		update();
-		emit_signal("ramp_changed");
+		emit_signal(SNAME("ramp_changed"));
 		accept_event();
 	}
 
 	Ref<InputEventMouseButton> mb = p_event;
 	//Show color picker on double click.
-	if (mb.is_valid() && mb->get_button_index() == 1 && mb->is_doubleclick() && mb->is_pressed()) {
+	if (mb.is_valid() && mb->get_button_index() == 1 && mb->is_double_click() && mb->is_pressed()) {
 		grabbed = _get_point_from_pos(mb->get_position().x);
 		_show_color_picker();
 		accept_event();
@@ -119,13 +121,13 @@ void GradientEdit::_gui_input(const Ref<InputEvent> &p_event) {
 			grabbed = -1;
 			grabbing = false;
 			update();
-			emit_signal("ramp_changed");
+			emit_signal(SNAME("ramp_changed"));
 			accept_event();
 		}
 	}
 
 	//Hold alt key to duplicate selected color
-	if (mb.is_valid() && mb->get_button_index() == 1 && mb->is_pressed() && mb->get_alt()) {
+	if (mb.is_valid() && mb->get_button_index() == 1 && mb->is_pressed() && mb->is_alt_pressed()) {
 		int x = mb->get_position().x;
 		grabbed = _get_point_from_pos(x);
 
@@ -143,7 +145,7 @@ void GradientEdit::_gui_input(const Ref<InputEvent> &p_event) {
 				}
 			}
 
-			emit_signal("ramp_changed");
+			emit_signal(SNAME("ramp_changed"));
 			update();
 		}
 	}
@@ -212,13 +214,13 @@ void GradientEdit::_gui_input(const Ref<InputEvent> &p_event) {
 			}
 		}
 
-		emit_signal("ramp_changed");
+		emit_signal(SNAME("ramp_changed"));
 	}
 
 	if (mb.is_valid() && mb->get_button_index() == 1 && !mb->is_pressed()) {
 		if (grabbing) {
 			grabbing = false;
-			emit_signal("ramp_changed");
+			emit_signal(SNAME("ramp_changed"));
 		}
 		update();
 	}
@@ -234,9 +236,9 @@ void GradientEdit::_gui_input(const Ref<InputEvent> &p_event) {
 
 		// Snap to "round" coordinates if holding Ctrl.
 		// Be more precise if holding Shift as well
-		if (mm->get_control()) {
-			newofs = Math::snapped(newofs, mm->get_shift() ? 0.025 : 0.1);
-		} else if (mm->get_shift()) {
+		if (mm->is_ctrl_pressed()) {
+			newofs = Math::snapped(newofs, mm->is_shift_pressed() ? 0.025 : 0.1);
+		} else if (mm->is_shift_pressed()) {
 			// Snap to nearest point if holding just Shift
 			const float snap_threshold = 0.03;
 			float smallest_ofs = snap_threshold;
@@ -286,7 +288,7 @@ void GradientEdit::_gui_input(const Ref<InputEvent> &p_event) {
 			}
 		}
 
-		emit_signal("ramp_changed");
+		emit_signal(SNAME("ramp_changed"));
 
 		update();
 	}
@@ -434,7 +436,7 @@ void GradientEdit::_color_changed(const Color &p_color) {
 	}
 	points.write[grabbed].color = p_color;
 	update();
-	emit_signal("ramp_changed");
+	emit_signal(SNAME("ramp_changed"));
 }
 
 void GradientEdit::set_ramp(const Vector<float> &p_offsets, const Vector<Color> &p_colors) {

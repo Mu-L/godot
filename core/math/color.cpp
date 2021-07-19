@@ -211,6 +211,14 @@ bool Color::is_equal_approx(const Color &p_color) const {
 	return Math::is_equal_approx(r, p_color.r) && Math::is_equal_approx(g, p_color.g) && Math::is_equal_approx(b, p_color.b) && Math::is_equal_approx(a, p_color.a);
 }
 
+Color Color::clamp(const Color &p_min, const Color &p_max) const {
+	return Color(
+			CLAMP(r, p_min.r, p_max.r),
+			CLAMP(g, p_min.g, p_max.g),
+			CLAMP(b, p_min.b, p_max.b),
+			CLAMP(a, p_min.a, p_max.a));
+}
+
 void Color::invert() {
 	r = 1.0 - r;
 	g = 1.0 - g;
@@ -360,7 +368,7 @@ Color Color::named(const String &p_name) {
 		ERR_FAIL_V_MSG(Color(), "Invalid color name: " + p_name + ".");
 		return Color();
 	}
-	return get_named_color(idx);
+	return named_colors[idx].color;
 }
 
 Color Color::named(const String &p_name, const Color &p_default) {
@@ -368,7 +376,7 @@ Color Color::named(const String &p_name, const Color &p_default) {
 	if (idx == -1) {
 		return p_default;
 	}
-	return get_named_color(idx);
+	return named_colors[idx].color;
 }
 
 int Color::find_named_color(const String &p_name) {
@@ -379,11 +387,11 @@ int Color::find_named_color(const String &p_name) {
 	name = name.replace("_", "");
 	name = name.replace("'", "");
 	name = name.replace(".", "");
-	name = name.to_lower();
+	name = name.to_upper();
 
 	int idx = 0;
 	while (named_colors[idx].name != nullptr) {
-		if (name == named_colors[idx].name) {
+		if (name == String(named_colors[idx].name).replace("_", "")) {
 			return idx;
 		}
 		idx++;
@@ -401,10 +409,12 @@ int Color::get_named_color_count() {
 }
 
 String Color::get_named_color_name(int p_idx) {
+	ERR_FAIL_INDEX_V(p_idx, get_named_color_count(), "");
 	return named_colors[p_idx].name;
 }
 
 Color Color::get_named_color(int p_idx) {
+	ERR_FAIL_INDEX_V(p_idx, get_named_color_count(), Color());
 	return named_colors[p_idx].color;
 }
 
@@ -452,60 +462,13 @@ String Color::to_html(bool p_alpha) const {
 }
 
 Color Color::from_hsv(float p_h, float p_s, float p_v, float p_a) const {
-	p_h = Math::fmod(p_h * 360.0f, 360.0f);
-	if (p_h < 0.0) {
-		p_h += 360.0f;
-	}
-
-	const float h_ = p_h / 60.0f;
-	const float c = p_v * p_s;
-	const float x = c * (1.0f - Math::abs(Math::fmod(h_, 2.0f) - 1.0f));
-	float r, g, b;
-
-	switch ((int)h_) {
-		case 0: {
-			r = c;
-			g = x;
-			b = 0;
-		} break;
-		case 1: {
-			r = x;
-			g = c;
-			b = 0;
-		} break;
-		case 2: {
-			r = 0;
-			g = c;
-			b = x;
-		} break;
-		case 3: {
-			r = 0;
-			g = x;
-			b = c;
-		} break;
-		case 4: {
-			r = x;
-			g = 0;
-			b = c;
-		} break;
-		case 5: {
-			r = c;
-			g = 0;
-			b = x;
-		} break;
-		default: {
-			r = 0;
-			g = 0;
-			b = 0;
-		} break;
-	}
-
-	const float m = p_v - c;
-	return Color(m + r, m + g, m + b, p_a);
+	Color c;
+	c.set_hsv(p_h, p_s, p_v, p_a);
+	return c;
 }
 
 Color::operator String() const {
-	return rtos(r) + ", " + rtos(g) + ", " + rtos(b) + ", " + rtos(a);
+	return "(" + String::num(r, 4) + ", " + String::num(g, 4) + ", " + String::num(b, 4) + ", " + String::num(a, 4) + ")";
 }
 
 Color Color::operator+(const Color &p_color) const {

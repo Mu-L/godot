@@ -36,7 +36,6 @@
 #include "android/asset_manager_jni.h"
 #include "api/java_class_wrapper.h"
 #include "api/jni_singleton.h"
-#include "audio_driver_jandroid.h"
 #include "core/config/engine.h"
 #include "core/config/project_settings.h"
 #include "core/input/input.h"
@@ -94,7 +93,6 @@ JNIEXPORT void JNICALL Java_org_godotengine_godot_GodotLib_initialize(JNIEnv *en
 	FileAccessAndroid::asset_manager = AAssetManager_fromJava(env, amgr);
 
 	DirAccessJAndroid::setup(godot_io_java->get_instance());
-	AudioDriverAndroid::setup(godot_io_java->get_instance());
 	NetSocketAndroid::setup(godot_java->get_member_object("netUtils", "Lorg/godotengine/godot/utils/GodotNetUtils;", env));
 
 	os_android = new OS_Android(godot_java, godot_io_java, p_use_apk_expansion);
@@ -127,9 +125,11 @@ JNIEXPORT void JNICALL Java_org_godotengine_godot_GodotLib_setup(JNIEnv *env, jc
 	if (p_cmdline) {
 		cmdlen = env->GetArrayLength(p_cmdline);
 		if (cmdlen) {
-			cmdline = (const char **)malloc((cmdlen + 1) * sizeof(const char *));
+			cmdline = (const char **)memalloc((cmdlen + 1) * sizeof(const char *));
+			ERR_FAIL_NULL_MSG(cmdline, "Out of memory.");
 			cmdline[cmdlen] = nullptr;
-			j_cmdline = (jstring *)malloc(cmdlen * sizeof(jstring));
+			j_cmdline = (jstring *)memalloc(cmdlen * sizeof(jstring));
+			ERR_FAIL_NULL_MSG(j_cmdline, "Out of memory.");
 
 			for (int i = 0; i < cmdlen; i++) {
 				jstring string = (jstring)env->GetObjectArrayElement(p_cmdline, i);
@@ -147,17 +147,17 @@ JNIEXPORT void JNICALL Java_org_godotengine_godot_GodotLib_setup(JNIEnv *env, jc
 			for (int i = 0; i < cmdlen; ++i) {
 				env->ReleaseStringUTFChars(j_cmdline[i], cmdline[i]);
 			}
-			free(j_cmdline);
+			memfree(j_cmdline);
 		}
-		free(cmdline);
+		memfree(cmdline);
 	}
 
 	if (err != OK) {
-		return; //should exit instead and print the error
+		return; // should exit instead and print the error
 	}
 
 	java_class_wrapper = memnew(JavaClassWrapper(godot_java->get_activity()));
-	ClassDB::register_class<JNISingleton>();
+	GDREGISTER_CLASS(JNISingleton);
 }
 
 JNIEXPORT void JNICALL Java_org_godotengine_godot_GodotLib_resize(JNIEnv *env, jclass clazz, jobject p_surface, jint p_width, jint p_height) {
@@ -171,6 +171,7 @@ JNIEXPORT void JNICALL Java_org_godotengine_godot_GodotLib_resize(JNIEnv *env, j
 				os_android->set_native_window(native_window);
 
 				DisplayServerAndroid::get_singleton()->reset_window();
+				DisplayServerAndroid::get_singleton()->notify_surface_changed(p_width, p_height);
 			}
 		}
 	}
@@ -215,9 +216,10 @@ JNIEXPORT void JNICALL Java_org_godotengine_godot_GodotLib_step(JNIEnv *env, jcl
 
 	if (step == 1) {
 		if (!Main::start()) {
-			return; //should exit instead and print the error
+			return; // should exit instead and print the error
 		}
 
+		godot_java->on_godot_setup_completed(env);
 		os_android->main_loop_begin();
 		godot_java->on_godot_main_loop_started(env);
 		++step;
@@ -322,15 +324,15 @@ JNIEXPORT void JNICALL Java_org_godotengine_godot_GodotLib_joyhat(JNIEnv *env, j
 	int hat = 0;
 	if (p_hat_x != 0) {
 		if (p_hat_x < 0)
-			hat |= Input::HAT_MASK_LEFT;
+			hat |= HatMask::HAT_MASK_LEFT;
 		else
-			hat |= Input::HAT_MASK_RIGHT;
+			hat |= HatMask::HAT_MASK_RIGHT;
 	}
 	if (p_hat_y != 0) {
 		if (p_hat_y < 0)
-			hat |= Input::HAT_MASK_UP;
+			hat |= HatMask::HAT_MASK_UP;
 		else
-			hat |= Input::HAT_MASK_DOWN;
+			hat |= HatMask::HAT_MASK_DOWN;
 	}
 	jevent.hat = hat;
 
@@ -379,11 +381,6 @@ JNIEXPORT void JNICALL Java_org_godotengine_godot_GodotLib_focusout(JNIEnv *env,
 		return;
 
 	os_android->main_loop_focusout();
-}
-
-JNIEXPORT void JNICALL Java_org_godotengine_godot_GodotLib_audio(JNIEnv *env, jclass clazz) {
-	setup_android_thread();
-	AudioDriverAndroid::thread_func(env);
 }
 
 JNIEXPORT jstring JNICALL Java_org_godotengine_godot_GodotLib_getGlobal(JNIEnv *env, jclass clazz, jstring path) {
@@ -454,7 +451,7 @@ JNIEXPORT void JNICALL Java_org_godotengine_godot_GodotLib_requestPermissionResu
 	}
 
 	if (os_android->get_main_loop()) {
-		os_android->get_main_loop()->emit_signal("on_request_permissions_result", permission, p_result == JNI_TRUE);
+		os_android->get_main_loop()->emit_signal(SNAME("on_request_permissions_result"), permission, p_result == JNI_TRUE);
 	}
 }
 

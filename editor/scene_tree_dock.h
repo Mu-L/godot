@@ -55,7 +55,7 @@ class SceneTreeDock : public VBoxContainer {
 
 	enum Tool {
 		TOOL_NEW,
-		TOOL_INSTANCE,
+		TOOL_INSTANTIATE,
 		TOOL_EXPAND_COLLAPSE,
 		TOOL_CUT,
 		TOOL_COPY,
@@ -100,6 +100,7 @@ class SceneTreeDock : public VBoxContainer {
 	Vector<ObjectID> subresources;
 
 	bool restore_script_editor_on_drag;
+	bool reset_create_dialog = false;
 
 	int current_option;
 	CreateDialog *create_dialog;
@@ -203,8 +204,10 @@ class SceneTreeDock : public VBoxContainer {
 	void _import_subscene();
 
 	void _new_scene_from(String p_file);
+	void _set_node_owner_recursive(Node *p_node, Node *p_owner);
 
 	bool _validate_no_foreign();
+	bool _validate_no_instance();
 	void _selection_changed();
 	void _update_script_button();
 
@@ -221,7 +224,7 @@ class SceneTreeDock : public VBoxContainer {
 
 	void _filter_changed(const String &p_filter);
 
-	void _perform_instance_scenes(const Vector<String> &p_files, Node *parent, int p_pos);
+	void _perform_instantiate_scenes(const Vector<String> &p_files, Node *parent, int p_pos);
 	void _replace_with_branch_scene(const String &p_file, Node *base);
 
 	void _file_selected(String p_file);
@@ -241,6 +244,12 @@ class SceneTreeDock : public VBoxContainer {
 	bool profile_allow_editing;
 	bool profile_allow_script_editing;
 
+	static SceneTreeDock *singleton;
+	static void _update_configuration_warning();
+
+	static bool _update_node_path(const NodePath &p_root_path, NodePath &r_node_path, List<Pair<NodePath, NodePath>> *p_renames);
+	static bool _check_node_path_recursive(const NodePath &p_root_path, Variant &r_variant, List<Pair<NodePath, NodePath>> *p_renames);
+
 protected:
 	void _notification(int p_what);
 	static void _bind_methods();
@@ -252,9 +261,10 @@ public:
 	void _focus_node();
 
 	void import_subscene();
+	void add_root_node(Node *p_node);
 	void set_edited_scene(Node *p_scene);
-	void instance(const String &p_file);
-	void instance_scenes(const Vector<String> &p_files, Node *p_parent = nullptr);
+	void instantiate(const String &p_file);
+	void instantiate_scenes(const Vector<String> &p_files, Node *p_parent = nullptr);
 	void set_selected(Node *p_node, bool p_emit_selected = false);
 	void fill_path_renames(Node *p_node, Node *p_new_parent, List<Pair<NodePath, NodePath>> *p_renames);
 	void perform_node_renames(Node *p_base, List<Pair<NodePath, NodePath>> *p_renames, Map<Ref<Animation>, Set<int>> *r_rem_anims = nullptr);
@@ -271,6 +281,9 @@ public:
 
 	void attach_script_to_selected(bool p_extend);
 	void open_script_dialog(Node *p_for_node, bool p_extend);
+
+	void open_add_child_dialog();
+	void open_instance_child_dialog();
 
 	ScriptCreateDialog *get_script_create_dialog() { return script_create_dialog; }
 

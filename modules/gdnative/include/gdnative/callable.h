@@ -37,6 +37,7 @@ extern "C" {
 
 #include <stdint.h>
 
+// Alignment hardcoded in `core/variant/callable.h`.
 #define GODOT_CALLABLE_SIZE (16)
 
 #ifndef GODOT_CORE_API_GODOT_CALLABLE_TYPE_DEFINED
@@ -49,6 +50,7 @@ typedef struct {
 #include <gdnative/gdnative.h>
 
 void GDAPI godot_callable_new(godot_callable *p_self);
+void GDAPI godot_callable_new_copy(godot_callable *r_dest, const godot_callable *p_src);
 void GDAPI godot_callable_destroy(godot_callable *p_self);
 
 #ifdef __cplusplus

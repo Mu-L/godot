@@ -40,8 +40,8 @@ class VehicleWheel3D : public Node3D {
 
 	friend class VehicleBody3D;
 
-	Transform m_worldTransform;
-	Transform local_xform;
+	Transform3D m_worldTransform;
+	Transform3D local_xform;
 	bool engine_traction = false;
 	bool steers = false;
 
@@ -145,7 +145,7 @@ public:
 	void set_steering(real_t p_steering);
 	real_t get_steering() const;
 
-	String get_configuration_warning() const override;
+	TypedArray<String> get_configuration_warnings() const override;
 
 	VehicleWheel3D();
 };

@@ -64,6 +64,7 @@ class CanvasLayer : public Node {
 protected:
 	void _notification(int p_what);
 	static void _bind_methods();
+	void _validate_property(PropertyInfo &property) const override;
 
 public:
 	void set_layer(int p_xform);
@@ -77,9 +78,6 @@ public:
 
 	void set_rotation(real_t p_radians);
 	real_t get_rotation() const;
-
-	void set_rotation_degrees(real_t p_degrees);
-	real_t get_rotation_degrees() const;
 
 	void set_scale(const Size2 &p_scale);
 	Size2 get_scale() const;

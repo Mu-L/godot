@@ -6,9 +6,11 @@ from collections import OrderedDict
 
 # We need to define our own `Action` method to control the verbosity of output
 # and whenever we need to run those commands in a subprocess on some platforms.
-from SCons.Script import Action
 from SCons import Node
+from SCons.Script import Action
+from SCons.Script import ARGUMENTS
 from SCons.Script import Glob
+from SCons.Variables.BoolVariable import _text2bool
 from platform_methods import run_in_subprocess
 
 
@@ -145,6 +147,17 @@ def parse_cg_file(fname, uniforms, sizes, conditionals):
     fs.close()
 
 
+def get_cmdline_bool(option, default):
+    """We use `ARGUMENTS.get()` to check if options were manually overridden on the command line,
+    and SCons' _text2bool helper to convert them to booleans, otherwise they're handled as strings.
+    """
+    cmdline_val = ARGUMENTS.get(option)
+    if cmdline_val is not None:
+        return _text2bool(cmdline_val)
+    else:
+        return default
+
+
 def detect_modules(search_path, recursive=False):
     """Detects and collects a list of C++ modules at specified path
 
@@ -216,6 +229,18 @@ def is_module(path):
         if not os.path.exists(os.path.join(path, f)):
             return False
     return True
+
+
+def write_disabled_classes(class_list):
+    f = open("core/disabled_classes.gen.h", "w")
+    f.write("/* THIS FILE IS GENERATED DO NOT EDIT */\n")
+    f.write("#ifndef DISABLED_CLASSES_GEN_H\n")
+    f.write("#define DISABLED_CLASSES_GEN_H\n\n")
+    for c in class_list:
+        cs = c.strip()
+        if cs != "":
+            f.write("#define ClassDB_Disable_" + cs + " 1\n")
+    f.write("\n#endif\n")
 
 
 def write_modules(modules):
@@ -321,7 +346,7 @@ def use_windows_spawn_fix(self, platform=None):
     # On Windows, due to the limited command line length, when creating a static library
     # from a very high number of objects SCons will invoke "ar" once per object file;
     # that makes object files with same names to be overwritten so the last wins and
-    # the library looses symbols defined by overwritten objects.
+    # the library loses symbols defined by overwritten objects.
     # By enabling quick append instead of the default mode (replacing), libraries will
     # got built correctly regardless the invocation strategy.
     # Furthermore, since SCons will rebuild the library from scratch when an object file
@@ -465,7 +490,7 @@ def detect_visual_c_compiler_version(tools_env):
     # and not scons setup environment (env)... so make sure you call the right environment on it or it will fail to detect
     # the proper vc version that will be called
 
-    # There is no flag to give to visual c compilers to set the architecture, ie scons bits argument (32,64,ARM etc)
+    # There is no flag to give to visual c compilers to set the architecture, i.e. scons bits argument (32,64,ARM etc)
     # There are many different cl.exe files that are run, and each one compiles & links to a different architecture
     # As far as I know, the only way to figure out what compiler will be run when Scons calls cl.exe via Program()
     # is to check the PATH variable and figure out which one will be called first. Code below does that and returns:
@@ -620,7 +645,7 @@ def generate_vs_project(env, num_jobs):
                 'call "' + batch_file + '" !plat!',
             ]
 
-            # windows allows us to have spaces in paths, so we need
+            # Windows allows us to have spaces in paths, so we need
             # to double quote off the directory. However, the path ends
             # in a backslash, so we need to remove this, lest it escape the
             # last double quote off, confusing MSBuild
@@ -632,6 +657,9 @@ def generate_vs_project(env, num_jobs):
                 "tools=!tools!",
                 "-j%s" % num_jobs,
             ]
+
+            if env["tests"]:
+                common_build_postfix.append("tests=yes")
 
             if env["custom_modules"]:
                 common_build_postfix.append("custom_modules=%s" % env["custom_modules"])
@@ -645,6 +673,8 @@ def generate_vs_project(env, num_jobs):
         add_to_vs_project(env, env.modules_sources)
         add_to_vs_project(env, env.scene_sources)
         add_to_vs_project(env, env.servers_sources)
+        if env["tests"]:
+            add_to_vs_project(env, env.tests_sources)
         add_to_vs_project(env, env.editor_sources)
 
         for header in glob_recursive("**/*.h"):
@@ -769,9 +799,18 @@ def get_compiler_version(env):
             return None
     else:  # TODO: Implement for MSVC
         return None
-    match = re.search("[0-9]+\.[0-9.]+", version)
+    match = re.search(
+        "(?:(?<=version )|(?<=\) )|(?<=^))"
+        "(?P<major>\d+)"
+        "(?:\.(?P<minor>\d*))?"
+        "(?:\.(?P<patch>\d*))?"
+        "(?:-(?P<metadata1>[0-9a-zA-Z-]*))?"
+        "(?:\+(?P<metadata2>[0-9a-zA-Z-]*))?"
+        "(?: (?P<date>[0-9]{8}|[0-9]{6})(?![0-9a-zA-Z]))?",
+        version,
+    )
     if match is not None:
-        return list(map(int, match.group().split(".")))
+        return match.groupdict()
     else:
         return None
 

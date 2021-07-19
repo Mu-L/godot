@@ -32,10 +32,11 @@
 #define SOFT_PHYSICS_BODY_H
 
 #include "scene/3d/mesh_instance_3d.h"
+#include "servers/physics_server_3d.h"
 
 class SoftBody3D;
 
-class SoftBodyRenderingServerHandler {
+class SoftBodyRenderingServerHandler : public RenderingServerHandler {
 	friend class SoftBody3D;
 
 	RID mesh;
@@ -57,15 +58,20 @@ private:
 	void commit_changes();
 
 public:
-	void set_vertex(int p_vertex_id, const void *p_vector3);
-	void set_normal(int p_vertex_id, const void *p_vector3);
-	void set_aabb(const AABB &p_aabb);
+	void set_vertex(int p_vertex_id, const void *p_vector3) override;
+	void set_normal(int p_vertex_id, const void *p_vector3) override;
+	void set_aabb(const AABB &p_aabb) override;
 };
 
 class SoftBody3D : public MeshInstance3D {
 	GDCLASS(SoftBody3D, MeshInstance3D);
 
 public:
+	enum DisableMode {
+		DISABLE_MODE_REMOVE,
+		DISABLE_MODE_KEEP_ACTIVE,
+	};
+
 	struct PinnedPoint {
 		int point_index = -1;
 		NodePath spatial_attachment_path;
@@ -81,6 +87,8 @@ private:
 	SoftBodyRenderingServerHandler rendering_server_handler;
 
 	RID physics_rid;
+
+	DisableMode disable_mode = DISABLE_MODE_REMOVE;
 
 	bool mesh_owner = false;
 	uint32_t collision_mask = 1;
@@ -112,7 +120,7 @@ protected:
 	void _notification(int p_what);
 	static void _bind_methods();
 
-	virtual String get_configuration_warning() const override;
+	TypedArray<String> get_configuration_warnings() const override;
 
 protected:
 	void _update_physics_server();
@@ -121,6 +129,8 @@ protected:
 public:
 	void prepare_physics_server();
 	void become_mesh_owner();
+
+	RID get_physics_rid() const { return physics_rid; }
 
 	void set_collision_mask(uint32_t p_mask);
 	uint32_t get_collision_mask() const;
@@ -133,6 +143,9 @@ public:
 
 	void set_collision_layer_bit(int p_bit, bool p_value);
 	bool get_collision_layer_bit(int p_bit) const;
+
+	void set_disable_mode(DisableMode p_mode);
+	DisableMode get_disable_mode() const;
 
 	void set_parent_collision_ignore(const NodePath &p_parent_collision_ignore);
 	const NodePath &get_parent_collision_ignore() const;
@@ -149,17 +162,8 @@ public:
 	void set_linear_stiffness(real_t p_linear_stiffness);
 	real_t get_linear_stiffness();
 
-	void set_angular_stiffness(real_t p_angular_stiffness);
-	real_t get_angular_stiffness();
-
-	void set_volume_stiffness(real_t p_volume_stiffness);
-	real_t get_volume_stiffness();
-
 	void set_pressure_coefficient(real_t p_pressure_coefficient);
 	real_t get_pressure_coefficient();
-
-	void set_pose_matching_coefficient(real_t p_pose_matching_coefficient);
-	real_t get_pose_matching_coefficient();
 
 	void set_damping_coefficient(real_t p_damping_coefficient);
 	real_t get_damping_coefficient();
@@ -197,5 +201,7 @@ private:
 	int _get_pinned_point(int p_point_index, PinnedPoint *&r_point) const;
 	int _has_pinned_point(int p_point_index) const;
 };
+
+VARIANT_ENUM_CAST(SoftBody3D::DisableMode);
 
 #endif // SOFT_PHYSICS_BODY_H

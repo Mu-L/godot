@@ -13,12 +13,13 @@
 # Abhay Patel <Traumaticbean@protonmail.com>, 2020.
 # Bishwajeet Parhi <bishwajeet.techmaster@gmail.com>, 2020.
 # l4KKY <greenforcesave@gmail.com>, 2020.
+# harvinder rathor <harvinderr09@gmail.com>, 2021.
 msgid ""
 msgstr ""
 "Project-Id-Version: Godot Engine editor\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2021-01-06 18:29+0000\n"
-"Last-Translator: Shirious <sad3119823@gmail.com>\n"
+"PO-Revision-Date: 2021-05-03 21:29+0000\n"
+"Last-Translator: harvinder rathor <harvinderr09@gmail.com>\n"
 "Language-Team: Hindi <https://hosted.weblate.org/projects/godot-engine/godot/"
 "hi/>\n"
 "Language: hi\n"
@@ -26,7 +27,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.4.1-dev\n"
+"X-Generator: Weblate 4.7-dev\n"
 
 #: core/math/expression.cpp modules/gdscript/gdscript_functions.cpp
 #: modules/visual_script/visual_script_builtin_funcs.cpp
@@ -416,10 +417,6 @@ msgid "Animation tracks can only point to AnimationPlayer nodes."
 msgstr "एनिमेशन ट्रैक केवल एनिमेशनप्लेयर नोड्स को इंगित कर सकते हैं।"
 
 #: editor/animation_track_editor.cpp
-msgid "An animation player can't animate itself, only other players."
-msgstr "एक एनीमेशन खिलाड़ी खुद को चेतन नहीं कर सकता, केवल अन्य खिलाड़ी।"
-
-#: editor/animation_track_editor.cpp
 msgid "Not possible to add a new track without a root"
 msgstr "रूट के बिना नया ट्रैक जोड़ना संभव नहीं"
 
@@ -464,8 +461,9 @@ msgid "Anim Move Keys"
 msgstr "ऐनिमेटेड मूव कीज़"
 
 #: editor/animation_track_editor.cpp
-msgid "Clipboard is empty"
-msgstr "क्लिपबोर्ड खाली है"
+#: modules/visual_script/visual_script_editor.cpp
+msgid "Clipboard is empty!"
+msgstr ""
 
 #: editor/animation_track_editor.cpp
 msgid "Paste Tracks"
@@ -759,9 +757,8 @@ msgid "Method in target node must be specified."
 msgstr "Method को target node में निर्दिष्ट कीजिए."
 
 #: editor/connections_dialog.cpp
-#, fuzzy
 msgid "Method name must be a valid identifier."
-msgstr "Method को target node में निर्दिष्ट कीजिए."
+msgstr "विधि नाम एक मान्य पहचानकर्ता होना चाहिए।"
 
 #: editor/connections_dialog.cpp
 msgid ""
@@ -901,9 +898,8 @@ msgid "Signals"
 msgstr "संकेत"
 
 #: editor/connections_dialog.cpp
-#, fuzzy
 msgid "Filter signals"
-msgstr "फ़िल्टर फ़ाइलें..."
+msgstr "स्क्रीनिंग सिग्नल"
 
 #: editor/connections_dialog.cpp
 msgid "Are you sure you want to remove all connections from this signal?"
@@ -1031,22 +1027,23 @@ msgid "Owners Of:"
 msgstr "के स्वामी:"
 
 #: editor/dependency_editor.cpp
-#, fuzzy
 msgid ""
 "Remove selected files from the project? (no undo)\n"
 "You can find the removed files in the system trash to restore them."
-msgstr "परियोजना से चयनित फ़ाइलों को हटा दें? (बहाल नहीं किया जा सकता है)"
+msgstr ""
+"क्या आप प्रोजेक्ट से चयनित फ़ाइल को हटाना चाहते हैं? (पूर्ववत नहीं किया जा सकता है)\n"
+"आप सिस्टम रीसायकल बिन में हटाई गई फ़ाइलों को पुनर्स्थापित कर सकते हैं।"
 
 #: editor/dependency_editor.cpp
-#, fuzzy
 msgid ""
 "The files being removed are required by other resources in order for them to "
 "work.\n"
 "Remove them anyway? (no undo)\n"
 "You can find the removed files in the system trash to restore them."
 msgstr ""
-"निकाली गई फ़ाइलों को दूसरे संसाधनों द्वारा उनके लिए काम करने के लिए आवश्यक है\n"
-"वैसे भी उन्हें निकालें? (कोई पूर्ववत नहीं)"
+"हटाई जाने वाली फ़ाइल अन्य संसाधनों पर निर्भर है।\n"
+"क्या आप अभी भी हटाना चाहते हैं? (पूर्ववत नहीं किया जा सकता है)\n"
+"आप सिस्टम रीसायकल बिन में हटाई गई फ़ाइलों को पुनर्स्थापित कर सकते हैं।"
 
 #: editor/dependency_editor.cpp
 msgid "Cannot remove:"
@@ -1116,6 +1113,10 @@ msgstr "शब्द बदलें मूल्य"
 msgid "Thanks from the Godot community!"
 msgstr "गोडोट समुदाय से आपको धन्यवाद!"
 
+#: editor/editor_about.cpp editor/editor_node.cpp editor/project_manager.cpp
+msgid "Click to copy."
+msgstr ""
+
 #: editor/editor_about.cpp
 msgid "Godot Engine contributors"
 msgstr "गॉडोट इंजन योगदानकर्ता"
@@ -1156,9 +1157,8 @@ msgid "Silver Sponsors"
 msgstr "रजत प्रायोजक"
 
 #: editor/editor_about.cpp
-#, fuzzy
 msgid "Bronze Sponsors"
-msgstr "कांस्य दाताओं"
+msgstr "कांस्य प्रायोजक"
 
 #: editor/editor_about.cpp
 msgid "Mini Sponsors"
@@ -1598,34 +1598,31 @@ msgstr ""
 "निष्क्रिय करे."
 
 #: editor/editor_export.cpp
-#, fuzzy
 msgid ""
 "Target platform requires 'PVRTC' texture compression for GLES2. Enable "
 "'Import Pvrtc' in Project Settings."
 msgstr ""
-"GLES2 के लिये टार्गेट प्ल्टैफ़ोर्म को 'ETC' टे‍क्सचर कोम्प्रेशन की आवश्यकता है. 'Import Etc' "
-"को प्रोजेक्ट सेटिन्गस मे सक्रिय करे."
+"लक्ष्य मंच को GLES2 के \"PVRTC\" बनावट संपीड़न की आवश्यकता है। प्रोजेक्ट सेटिंग्स में \"आयात "
+"Pvrtc\" सक्षम करें।"
 
 #: editor/editor_export.cpp
-#, fuzzy
 msgid ""
 "Target platform requires 'ETC2' or 'PVRTC' texture compression for GLES3. "
 "Enable 'Import Etc 2' or 'Import Pvrtc' in Project Settings."
 msgstr ""
-"GLES3 के लिये टार्गेट प्ल्टैफ़ोर्म को 'ETC2' टे‍क्सचर कोम्प्रेशन की आवश्यकता है. 'Import Etc "
-"2' को प्रोजेक्ट सेटिन्गस मे सक्रिय करे."
+"लक्ष्य मंच को GLES2 के \"PVRTC\" बनावट संपीड़न की आवश्यकता है। प्रोजेक्ट सेटिंग्स में \"आयात "
+"Pvrtc\" सक्षम करें।"
 
 #: editor/editor_export.cpp
-#, fuzzy
 msgid ""
 "Target platform requires 'PVRTC' texture compression for the driver fallback "
 "to GLES2.\n"
 "Enable 'Import Pvrtc' in Project Settings, or disable 'Driver Fallback "
 "Enabled'."
 msgstr ""
-"GLES2 के लिये टार्गेट प्ल्टैफ़ोर्म को 'ETC' टे‍क्सचर कोम्प्रेशन की आवश्यकता है. \n"
-"'Import Etc' को प्रोजेक्ट सेटिन्गस मे सक्रिय करे, या 'Driver Fallback Enabled' को "
-"निष्क्रिय करे."
+"ड्राइवर के लिए GLES2 पर वापस आने के लिए लक्ष्य प्लेटफ़ॉर्म को \"PVRTC\" बनावट संपीड़न की "
+"आवश्यकता होती है।\n"
+"प्रोजेक्ट सेटिंग्स में \"आयात Pvrtc\" सक्षम करें, या \"ड्राइवर फ़ॉलबैक सक्षम\" अक्षम करें।"
 
 #: editor/editor_export.cpp platform/android/export/export.cpp
 #: platform/iphone/export/export.cpp platform/javascript/export/export.cpp
@@ -1668,9 +1665,8 @@ msgid "Node Dock"
 msgstr "नोड डॉक"
 
 #: editor/editor_feature_profile.cpp
-#, fuzzy
 msgid "FileSystem Dock"
-msgstr "फ़ाइल"
+msgstr "फाइल सिस्टम पैनल"
 
 #: editor/editor_feature_profile.cpp
 msgid "Import Dock"
@@ -1755,7 +1751,7 @@ msgstr "नई"
 #: editor/editor_feature_profile.cpp editor/editor_node.cpp
 #: editor/project_manager.cpp
 msgid "Import"
-msgstr "इंपोर्ट"
+msgstr "आयात"
 
 #: editor/editor_feature_profile.cpp editor/project_export.cpp
 msgid "Export"
@@ -1852,8 +1848,8 @@ msgid "Open a File or Directory"
 msgstr "फ़ाइल या डायरेक्टरी खोलिये"
 
 #: editor/editor_file_dialog.cpp editor/editor_node.cpp
-#: editor/editor_properties.cpp editor/inspector_dock.cpp
-#: editor/plugins/animation_player_editor_plugin.cpp
+#: editor/editor_properties.cpp editor/import_defaults_editor.cpp
+#: editor/inspector_dock.cpp editor/plugins/animation_player_editor_plugin.cpp
 #: editor/plugins/script_editor_plugin.cpp scene/gui/file_dialog.cpp
 msgid "Save"
 msgstr "सेव कीजिये"
@@ -1986,7 +1982,7 @@ msgstr "ऑनलाइन ट्यूटोरियल"
 
 #: editor/editor_help.cpp
 msgid "Properties"
-msgstr "प्रोपरटिज"
+msgstr "विशेषता"
 
 #: editor/editor_help.cpp
 msgid "override:"
@@ -1998,15 +1994,15 @@ msgstr "प्रायिक:"
 
 #: editor/editor_help.cpp
 msgid "Methods"
-msgstr "मेथड"
+msgstr "तरीकों"
 
 #: editor/editor_help.cpp
 msgid "Theme Properties"
-msgstr "थिम प्रोपरटिज"
+msgstr "थीम विशेषता"
 
 #: editor/editor_help.cpp
 msgid "Enumerations"
-msgstr "एन्युमरेशन"
+msgstr "गणना"
 
 #: editor/editor_help.cpp
 msgid "Constants"
@@ -2316,9 +2312,8 @@ msgid "Layout name not found!"
 msgstr "लेआउट नाम नहीं मिला!"
 
 #: editor/editor_node.cpp
-#, fuzzy
 msgid "Restored the Default layout to its base settings."
-msgstr "आधार सेटिंग्स के लिए डिफ़ॉल्ट लेआउट बहाल।"
+msgstr "डिफ़ॉल्ट लेआउट को मूल सामग्री पर बहाल कर दिया गया है।"
 
 #: editor/editor_node.cpp
 msgid ""
@@ -2374,7 +2369,7 @@ msgstr "चलाने के लिए कोई परिभाषित द�
 
 #: editor/editor_node.cpp
 msgid "Save scene before running..."
-msgstr ""
+msgstr "अंजाम देने से पहले सीन को बचाएं ..."
 
 #: editor/editor_node.cpp
 msgid "Could not start subprocess!"
@@ -2449,9 +2444,8 @@ msgid "Can't reload a scene that was never saved."
 msgstr "एक दृश्य है कि कभी नहीं बचाया गया था फिर से लोड नहीं कर सकते ।"
 
 #: editor/editor_node.cpp
-#, fuzzy
 msgid "Reload Saved Scene"
-msgstr "दृश्य बचाओ"
+msgstr "सहेजे गए दृश्य को पुनः लोड करें"
 
 #: editor/editor_node.cpp
 msgid ""
@@ -2490,7 +2484,7 @@ msgid "Save changes to the following scene(s) before quitting?"
 msgstr "छोड़ने से पहले निम्नलिखित दृश्य (ओं) में परिवर्तन सहेजें?"
 
 #: editor/editor_node.cpp
-msgid "Save changes the following scene(s) before opening Project Manager?"
+msgid "Save changes to the following scene(s) before opening Project Manager?"
 msgstr "परियोजना प्रबंधक खोलने से पहले निम्नलिखित दृश्य (ओं) में परिवर्तन सहेजें?"
 
 #: editor/editor_node.cpp
@@ -2518,18 +2512,19 @@ msgid "Unable to enable addon plugin at: '%s' parsing of config failed."
 msgstr "ऐडऑन प्लगइन को सक्षम करने में असमर्थ: '%' कॉन्फिग का पार्सिंग विफल रहा।"
 
 #: editor/editor_node.cpp
-#, fuzzy
 msgid "Unable to find script field for addon plugin at: '%s'."
-msgstr "ऐडऑन प्लगइन के लिए स्क्रिप्ट फ़ील्ड खोजने में असमर्थ: 'res://addons/% s'।"
+msgstr "ऐड-इन का स्क्रिप्ट फ़ील्ड \"% s\" पर नहीं पाया जा सका।"
 
 #: editor/editor_node.cpp
 msgid "Unable to load addon script from path: '%s'."
 msgstr "पथ से ऐडऑन स्क्रिप्ट लोड करने में असमर्थ: '%' ।"
 
 #: editor/editor_node.cpp
+#, fuzzy
 msgid ""
-"Unable to load addon script from path: '%s' There seems to be an error in "
-"the code, please check the syntax."
+"Unable to load addon script from path: '%s'. This might be due to a code "
+"error in that script.\n"
+"Disabling the addon at '%s' to prevent further errors."
 msgstr ""
 "रास्ते से ऐडऑन स्क्रिप्ट लोड करने में असमर्थ: '% एस' कोड में गड़बड़ी लगती है, कृपया सिंटेक्स की "
 "जांच करें।"
@@ -2815,12 +2810,10 @@ msgstr ""
 "इसे GDScript इसि मशीन पर डिबग करने के लिये इसे सक्रिय करने कि जरुरत नही|"
 
 #: editor/editor_node.cpp
-#, fuzzy
 msgid "Small Deploy with Network Filesystem"
-msgstr "नेटवर्क एफएस के साथ छोटे तैनात"
+msgstr "छोटी तैनाती के लिए नेटवर्क फाइल सिस्टम का उपयोग करें"
 
 #: editor/editor_node.cpp
-#, fuzzy
 msgid ""
 "When this option is enabled, using one-click deploy for Android will only "
 "export an executable without the project data.\n"
@@ -2829,70 +2822,67 @@ msgid ""
 "On Android, deploying will use the USB cable for faster performance. This "
 "option speeds up testing for projects with large assets."
 msgstr ""
-"जब यह विकल्प सक्षम हो जाता है, तो निर्यात या तैनाती न्यूनतम निष्पादित उत्पादन करेगी।\n"
-"नेटवर्क के ऊपर संपादक द्वारा परियोजना से फाइलसिस्टम उपलब्ध कराया जाएगा।\n"
-"एंड्रॉयड पर, तैनात तेजी से प्रदर्शन के लिए यूएसबी केबल का उपयोग करेंगे । यह विकल्प एक बड़े "
-"पदचिह्न के साथ खेल के लिए परीक्षण को गति देता है।"
+"जब यह विकल्प सक्षम हो जाता है, तो Android पर एक-क्लिक परिनियोजन के दौरान निर्यात "
+"की गई निष्पादन योग्य फ़ाइल में प्रोजेक्ट डेटा नहीं होगा।\n"
+"फ़ाइल सिस्टम परियोजना पर आधारित नेटवर्क पर संपादक द्वारा प्रदान किया जाएगा।\n"
+"Android प्लेटफॉर्म पर, प्रदर्शन में सुधार के लिए एक USB केबल के माध्यम से तैनाती की जाएगी। "
+"यदि प्रोजेक्ट में बड़ी सामग्री है, तो यह विकल्प परीक्षण की गति बढ़ा सकता है।"
 
 #: editor/editor_node.cpp
 msgid "Visible Collision Shapes"
 msgstr "दृश्यमान टकराव आकार"
 
 #: editor/editor_node.cpp
-#, fuzzy
 msgid ""
 "When this option is enabled, collision shapes and raycast nodes (for 2D and "
 "3D) will be visible in the running project."
 msgstr ""
-"यदि यह विकल्प चालू हो जाता है तो टकराव के आकार और रेकास्ट नोड्स (2डी और 3 डी के लिए) "
-"चल रहे खेल पर दिखाई देंगे।"
+"जब यह विकल्प चालू होता है, तो प्रोजेक्ट निष्पादित होने पर टक्कर क्षेत्र और किरण नोड्स (2D "
+"और 3D) दिखाई देगा।"
 
 #: editor/editor_node.cpp
 msgid "Visible Navigation"
 msgstr "दर्शनीय नेविगेशन"
 
 #: editor/editor_node.cpp
-#, fuzzy
 msgid ""
 "When this option is enabled, navigation meshes and polygons will be visible "
 "in the running project."
-msgstr "यदि यह विकल्प चालू हो जाता है तो नेविगेशन मेशेस और बहुभुज चल रहे खेल पर दिखाई देंगे।"
+msgstr ""
+"जब यह विकल्प सक्षम हो जाता है, तो प्रोजेक्ट चालू होने पर नेविगेशन ग्रिड और बहुभुज दिखाई "
+"देंगे।"
 
 #: editor/editor_node.cpp
-#, fuzzy
 msgid "Synchronize Scene Changes"
-msgstr "सिंक सीन बदलता है"
+msgstr "दृश्य संशोधन सिंक्रनाइज़ करें"
 
 #: editor/editor_node.cpp
-#, fuzzy
 msgid ""
 "When this option is enabled, any changes made to the scene in the editor "
 "will be replicated in the running project.\n"
 "When used remotely on a device, this is more efficient when the network "
 "filesystem option is enabled."
 msgstr ""
-"जब इस विकल्प को चालू किया जाता है, तो संपादक में दृश्य में किए गए किसी भी परिवर्तन को "
-"चल रहे खेल में दोहराया जाएगा।\n"
-"जब किसी डिवाइस पर दूर से उपयोग किया जाता है, तो यह नेटवर्क फाइलसिस्टम के साथ अधिक "
-"कुशल होता है।"
+"जब यह विकल्प सक्षम हो जाता है, तो संपादक के दृश्य में कोई भी बदलाव रनिंग प्रोजेक्ट पर लागू "
+"किया जाएगा।\n"
+"यदि इसका उपयोग दूरस्थ डिवाइस पर किया जाता है, तो नेटवर्क फ़ाइल सिस्टम NFS का उपयोग "
+"सर्वश्रेष्ठ प्रदर्शन के लिए किया जा सकता है।"
 
 #: editor/editor_node.cpp
-#, fuzzy
 msgid "Synchronize Script Changes"
-msgstr "सिंक स्क्रिप्ट परिवर्तन"
+msgstr "सिंक स्क्रिप्ट संशोधन"
 
 #: editor/editor_node.cpp
-#, fuzzy
 msgid ""
 "When this option is enabled, any script that is saved will be reloaded in "
 "the running project.\n"
 "When used remotely on a device, this is more efficient when the network "
 "filesystem option is enabled."
 msgstr ""
-"जब यह विकल्प चालू हो जाएगा, तो सहेजी गई किसी भी स्क्रिप्ट को चल रहे गेम पर फिर से लोड "
-"किया जाएगा।\n"
-"जब किसी डिवाइस पर दूर से उपयोग किया जाता है, तो यह नेटवर्क फाइलसिस्टम के साथ अधिक "
-"कुशल होता है।"
+"जब यह विकल्प सक्षम हो जाता है, तो किसी भी सहेजी गई स्क्रिप्ट को रनिंग प्रोजेक्ट द्वारा "
+"पुनः लोड किया जाएगा।\n"
+"जब दूरस्थ उपकरणों में उपयोग किया जाता है, तो नेटवर्क फ़ाइल सिस्टम को सक्षम करना संपादन "
+"दक्षता में सुधार कर सकता है।"
 
 #: editor/editor_node.cpp editor/script_create_dialog.cpp
 msgid "Editor"
@@ -2970,6 +2960,10 @@ msgstr "समुदाय"
 #: editor/editor_node.cpp
 msgid "About"
 msgstr "के बारे में"
+
+#: editor/editor_node.cpp
+msgid "Support Godot Development"
+msgstr ""
 
 #: editor/editor_node.cpp
 msgid "Play the project."
@@ -3110,21 +3104,22 @@ msgid "Open & Run a Script"
 msgstr "ओपन एंड रन एक स्क्रिप्ट"
 
 #: editor/editor_node.cpp
-#, fuzzy
 msgid ""
 "The following files are newer on disk.\n"
 "What action should be taken?"
-msgstr "निम्न फ़ाइलों का निस्सारण नहीं हो पाया:"
+msgstr ""
+"डिस्क पर निम्न फ़ाइलें नई हैं।\n"
+"क्या किया जाए?"
 
 #: editor/editor_node.cpp editor/plugins/script_editor_plugin.cpp
 #: editor/plugins/shader_editor_plugin.cpp
 msgid "Reload"
-msgstr ""
+msgstr "पुनः लोड करें"
 
 #: editor/editor_node.cpp editor/plugins/script_editor_plugin.cpp
 #: editor/plugins/shader_editor_plugin.cpp
 msgid "Resave"
-msgstr ""
+msgstr "पुन: सहेज"
 
 #: editor/editor_node.cpp
 msgid "New Inherited"
@@ -3372,14 +3367,14 @@ msgid "Add Key/Value Pair"
 msgstr "कुंजी/मूल्य जोड़ी जोड़ें"
 
 #: editor/editor_run_native.cpp
-#, fuzzy
 msgid ""
 "No runnable export preset found for this platform.\n"
 "Please add a runnable preset in the Export menu or define an existing preset "
 "as runnable."
 msgstr ""
-"इस मंच के लिए कोई रननयोग्य निर्यात पूर्व निर्धारित नहीं मिला।\n"
-"कृपया निर्यात मेनू में एक रननेबल प्रीसेट जोड़ें।"
+"प्लेटफ़ॉर्म के अनुरूप कोई निष्पादन योग्य प्रीसेट नहीं है।\n"
+"कृपया निर्यात मेनू में एक निष्पादन योग्य प्रीसेट जोड़ें, या मौजूदा प्रीसेट को निष्पादन योग्य के "
+"रूप में सेट करें।"
 
 #: editor/editor_run_script.cpp
 msgid "Write your logic in the _run() method."
@@ -3646,6 +3641,12 @@ msgstr ""
 "स्थिति: फाइल का आयात विफल रहा। कृपया फाइल को ठीक करें और मैन्युअल रूप से पुनर्आयात करें।"
 
 #: editor/filesystem_dock.cpp
+msgid ""
+"Importing has been disabled for this file, so it can't be opened for editing."
+msgstr ""
+"इस फ़ाइल का आयात अक्षम कर दिया गया है, इसलिए इसे संपादन के लिए नहीं खोला जा सकता है।"
+
+#: editor/filesystem_dock.cpp
 msgid "Cannot move/rename resources root."
 msgstr "संसाधनों की जड़ को स्थानांतरित/नाम नहीं दे सकते ।"
 
@@ -3775,9 +3776,8 @@ msgid "Duplicate..."
 msgstr "डुप्लिकेट..."
 
 #: editor/filesystem_dock.cpp
-#, fuzzy
 msgid "Move to Trash"
-msgstr "औटोलोड हिलाइये"
+msgstr "ट्रैश में ले जाएं"
 
 #: editor/filesystem_dock.cpp editor/plugins/animation_player_editor_plugin.cpp
 msgid "Rename..."
@@ -3887,19 +3887,16 @@ msgid "Searching..."
 msgstr "खोज..."
 
 #: editor/find_in_files.cpp
-#, fuzzy
 msgid "%d match in %d file."
-msgstr "%d मिल गया।"
+msgstr "%d मैच, कुल %d फाइलें।"
 
 #: editor/find_in_files.cpp
-#, fuzzy
 msgid "%d matches in %d file."
-msgstr "%d मिल गया।"
+msgstr "%d मिलान परिणाम (%d फ़ाइलों में)।"
 
 #: editor/find_in_files.cpp
-#, fuzzy
 msgid "%d matches in %d files."
-msgstr "%d मिल गया।"
+msgstr "%d मैच, कुल %d फाइलें।"
 
 #: editor/groups_editor.cpp
 msgid "Add to Group"
@@ -4033,6 +4030,25 @@ msgstr ""
 
 #: editor/import/resource_importer_scene.cpp
 msgid "Saving..."
+msgstr ""
+
+#: editor/import_defaults_editor.cpp
+#, fuzzy
+msgid "Select Importer"
+msgstr "आयात करने के लिए नोड (एस) का चयन करें"
+
+#: editor/import_defaults_editor.cpp
+#, fuzzy
+msgid "Importer:"
+msgstr "इंपोर्ट"
+
+#: editor/import_defaults_editor.cpp
+#, fuzzy
+msgid "Reset to Defaults"
+msgstr "प्रायिक लोड कीजिये"
+
+#: editor/import_dock.cpp
+msgid "Keep File (No Import)"
 msgstr ""
 
 #: editor/import_dock.cpp
@@ -5086,7 +5102,6 @@ msgid "Sort:"
 msgstr ""
 
 #: editor/plugins/asset_library_editor_plugin.cpp
-#: editor/project_settings_editor.cpp
 msgid "Category:"
 msgstr ""
 
@@ -7434,6 +7449,11 @@ msgstr ""
 
 #: editor/plugins/spatial_editor_plugin.cpp
 msgid "View Rotation Locked"
+msgstr ""
+
+#: editor/plugins/spatial_editor_plugin.cpp
+msgid ""
+"To zoom further, change the camera's clipping planes (View -> Settings...)"
 msgstr ""
 
 #: editor/plugins/spatial_editor_plugin.cpp
@@ -9915,7 +9935,7 @@ msgstr ""
 
 #: editor/project_settings_editor.cpp
 msgid ""
-"Invalid action name. it cannot be empty nor contain '/', ':', '=', '\\' or "
+"Invalid action name. It cannot be empty nor contain '/', ':', '=', '\\' or "
 "'\"'"
 msgstr ""
 
@@ -10213,6 +10233,11 @@ msgstr ""
 #: editor/project_settings_editor.cpp
 msgid "Plugins"
 msgstr "प्लगइन्स"
+
+#: editor/project_settings_editor.cpp
+#, fuzzy
+msgid "Import Defaults"
+msgstr "प्रायिक लोड कीजिये"
 
 #: editor/property_editor.cpp
 msgid "Preset..."
@@ -10706,6 +10731,13 @@ msgstr ""
 
 #: editor/scene_tree_dock.cpp
 msgid "Remote"
+msgstr ""
+
+#: editor/scene_tree_dock.cpp
+msgid ""
+"If selected, the Remote scene tree dock will cause the project to stutter "
+"every time it updates.\n"
+"Switch back to the Local scene tree dock to improve performance."
 msgstr ""
 
 #: editor/scene_tree_dock.cpp
@@ -11740,10 +11772,6 @@ msgid "Can't copy the function node."
 msgstr ""
 
 #: modules/visual_script/visual_script_editor.cpp
-msgid "Clipboard is empty!"
-msgstr ""
-
-#: modules/visual_script/visual_script_editor.cpp
 msgid "Paste VisualScript Nodes"
 msgstr ""
 
@@ -11953,7 +11981,19 @@ msgid ""
 msgstr ""
 
 #: platform/android/export/export.cpp
+msgid ""
+"Either Debug Keystore, Debug User AND Debug Password settings must be "
+"configured OR none of them."
+msgstr ""
+
+#: platform/android/export/export.cpp
 msgid "Debug keystore not configured in the Editor Settings nor in the preset."
+msgstr ""
+
+#: platform/android/export/export.cpp
+msgid ""
+"Either Release Keystore, Release User AND Release Password settings must be "
+"configured OR none of them."
 msgstr ""
 
 #: platform/android/export/export.cpp
@@ -12217,6 +12257,14 @@ msgstr ""
 msgid "An empty CollisionPolygon2D has no effect on collision."
 msgstr ""
 
+#: scene/2d/collision_polygon_2d.cpp
+msgid "Invalid polygon. At least 3 points are needed in 'Solids' build mode."
+msgstr ""
+
+#: scene/2d/collision_polygon_2d.cpp
+msgid "Invalid polygon. At least 2 points are needed in 'Segments' build mode."
+msgstr ""
+
 #: scene/2d/collision_shape_2d.cpp
 msgid ""
 "CollisionShape2D only serves to provide a collision shape to a "
@@ -12472,11 +12520,6 @@ msgstr ""
 msgid ""
 "GIProbes are not supported by the GLES2 video driver.\n"
 "Use a BakedLightmap instead."
-msgstr ""
-
-#: scene/3d/interpolated_camera.cpp
-msgid ""
-"InterpolatedCamera has been deprecated and will be removed in Godot 4.0."
 msgstr ""
 
 #: scene/3d/light.cpp
@@ -12768,6 +12811,12 @@ msgstr ""
 #: servers/visual/shader_language.cpp
 msgid "Constants cannot be modified."
 msgstr ""
+
+#~ msgid "An animation player can't animate itself, only other players."
+#~ msgstr "एक एनीमेशन खिलाड़ी खुद को चेतन नहीं कर सकता, केवल अन्य खिलाड़ी।"
+
+#~ msgid "Clipboard is empty"
+#~ msgstr "क्लिपबोर्ड खाली है"
 
 #~ msgid "No"
 #~ msgstr "नहीं"

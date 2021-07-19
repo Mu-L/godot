@@ -73,17 +73,20 @@
 # Kevin Bouancheau <kevin.bouancheau@gmail.com>, 2020.
 # LaurentOngaro <laurent@gameamea.com>, 2020.
 # Julien Humbert <julroy67@gmail.com>, 2020.
-# Nathan <bonnemainsnathan@gmail.com>, 2020.
+# Nathan <bonnemainsnathan@gmail.com>, 2020, 2021.
 # Léo Vincent <l009.vincent@gmail.com>, 2020.
 # Joseph Boudou <joseph.boudou@matabio.net>, 2020.
 # Vincent Foulon <vincent.foulon80@gmail.com>, 2020.
 # TechnoPorg <jonah.janzen@gmail.com>, 2021.
+# ASTRALE <jules.cercy@etu.univ-lyon1.fr>, 2021.
+# Julien Vanelian <julienvanelian@hotmail.com>, 2021.
+# Clément Topy <topy72.mine@gmail.com>, 2021.
 msgid ""
 msgstr ""
 "Project-Id-Version: Godot Engine editor\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2021-01-22 10:21+0000\n"
-"Last-Translator: Pierre Caye <pierrecaye@laposte.net>\n"
+"PO-Revision-Date: 2021-07-01 14:33+0000\n"
+"Last-Translator: Clément Topy <topy72.mine@gmail.com>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/godot-engine/"
 "godot/fr/>\n"
 "Language: fr\n"
@@ -91,7 +94,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.5-dev\n"
+"X-Generator: Weblate 4.8-dev\n"
 
 #: core/math/expression.cpp modules/gdscript/gdscript_functions.cpp
 #: modules/visual_script/visual_script_builtin_funcs.cpp
@@ -107,7 +110,7 @@ msgstr "Une chaîne de caractères de longueur 1 est attendue (un caractère)."
 #: modules/mono/glue/gd_glue.cpp
 #: modules/visual_script/visual_script_builtin_funcs.cpp
 msgid "Not enough bytes for decoding bytes, or invalid format."
-msgstr "Pas assez d’octets pour le décodage, ou format non valide."
+msgstr "Pas assez d’octets pour le décodage, ou format invalide."
 
 #: core/math/expression.cpp
 msgid "Invalid input %i (not passed) in expression"
@@ -485,12 +488,6 @@ msgstr ""
 "Les pistes d’animation ne peuvent pointer que sur des nœuds AnimationPlayer."
 
 #: editor/animation_track_editor.cpp
-msgid "An animation player can't animate itself, only other players."
-msgstr ""
-"Un lecteur d’animation ne peut s’animer lui-même, seulement les autres "
-"lecteurs."
-
-#: editor/animation_track_editor.cpp
 msgid "Not possible to add a new track without a root"
 msgstr "Impossible d’ajouter une nouvelle piste sans racine"
 
@@ -537,8 +534,9 @@ msgid "Anim Move Keys"
 msgstr "Déplacer les clés d’animation"
 
 #: editor/animation_track_editor.cpp
-msgid "Clipboard is empty"
-msgstr "Le presse-papiers est vide"
+#: modules/visual_script/visual_script_editor.cpp
+msgid "Clipboard is empty!"
+msgstr "Le presse-papiers est vide !"
 
 #: editor/animation_track_editor.cpp
 msgid "Paste Tracks"
@@ -1199,6 +1197,10 @@ msgstr "Modifier valeur du dictionnaire"
 msgid "Thanks from the Godot community!"
 msgstr "La communauté Godot vous dit merci !"
 
+#: editor/editor_about.cpp editor/editor_node.cpp editor/project_manager.cpp
+msgid "Click to copy."
+msgstr "Cliquez pour copier."
+
 #: editor/editor_about.cpp
 msgid "Godot Engine contributors"
 msgstr "Contributeurs de Godot Engine"
@@ -1244,7 +1246,7 @@ msgstr "Sponsors Bronze"
 
 #: editor/editor_about.cpp
 msgid "Mini Sponsors"
-msgstr "Mini Sponsors"
+msgstr "Petits Sponsors"
 
 #: editor/editor_about.cpp
 msgid "Gold Donors"
@@ -1397,7 +1399,7 @@ msgstr "Contourner"
 
 #: editor/editor_audio_buses.cpp
 msgid "Bus options"
-msgstr "Options de tranport"
+msgstr "Options de bus"
 
 #: editor/editor_audio_buses.cpp editor/filesystem_dock.cpp
 #: editor/plugins/animation_player_editor_plugin.cpp editor/scene_tree_dock.cpp
@@ -1938,8 +1940,8 @@ msgid "Open a File or Directory"
 msgstr "Ouvrir un fichier ou un répertoire"
 
 #: editor/editor_file_dialog.cpp editor/editor_node.cpp
-#: editor/editor_properties.cpp editor/inspector_dock.cpp
-#: editor/plugins/animation_player_editor_plugin.cpp
+#: editor/editor_properties.cpp editor/import_defaults_editor.cpp
+#: editor/inspector_dock.cpp editor/plugins/animation_player_editor_plugin.cpp
 #: editor/plugins/script_editor_plugin.cpp scene/gui/file_dialog.cpp
 msgid "Save"
 msgstr "Enregistrer"
@@ -2590,7 +2592,7 @@ msgstr ""
 "quitter ?"
 
 #: editor/editor_node.cpp
-msgid "Save changes the following scene(s) before opening Project Manager?"
+msgid "Save changes to the following scene(s) before opening Project Manager?"
 msgstr ""
 "Enregistrer les modifications sur la (les) scène(s) suivante(s) avant "
 "d'ouvrir le gestionnaire de projet ?"
@@ -2624,8 +2626,7 @@ msgstr ""
 
 #: editor/editor_node.cpp
 msgid "Unable to find script field for addon plugin at: '%s'."
-msgstr ""
-"Impossible de trouver le champ de script pour le plugin dans : « %s »."
+msgstr "Impossible de trouver le champ de script pour le plugin dans : « %s »."
 
 #: editor/editor_node.cpp
 msgid "Unable to load addon script from path: '%s'."
@@ -2634,11 +2635,13 @@ msgstr ""
 
 #: editor/editor_node.cpp
 msgid ""
-"Unable to load addon script from path: '%s' There seems to be an error in "
-"the code, please check the syntax."
+"Unable to load addon script from path: '%s'. This might be due to a code "
+"error in that script.\n"
+"Disabling the addon at '%s' to prevent further errors."
 msgstr ""
-"Impossible de charger le script de l’extension depuis le chemin : « %s ». Il "
-"semble y avoir une erreur dans le code, merci de vérifier la syntaxe."
+"Impossible de charger le script de l’extension depuis le chemin : « %s ». "
+"Cela peut être dû à une erreur de programmation dans ce script.\n"
+"L'extension « %s » a été désactivée pour prévenir de nouvelles erreures."
 
 #: editor/editor_node.cpp
 msgid ""
@@ -3089,6 +3092,10 @@ msgid "About"
 msgstr "À propos"
 
 #: editor/editor_node.cpp
+msgid "Support Godot Development"
+msgstr "Soutenir le développement de Godot"
+
+#: editor/editor_node.cpp
 msgid "Play the project."
 msgstr "Lancer le projet."
 
@@ -3195,7 +3202,7 @@ msgstr ""
 "personnalisé à l'exportation (ajout de modules, modification du fichier "
 "AndroidManifest.xml, etc.).\n"
 "Notez que pour faire des compilations personnalisées au lieu d'utiliser des "
-"APKs pré-construits, l'option \"Use Custom Build\" doit être activée dans le "
+"APKs préconstruits, l'option \"Use Custom Build\" doit être activée dans le "
 "Preset d'exportation Android."
 
 #: editor/editor_node.cpp
@@ -3249,7 +3256,7 @@ msgstr "Ré-enregistrer"
 
 #: editor/editor_node.cpp
 msgid "New Inherited"
-msgstr "Nouveau hérité"
+msgstr "Nouvelle scène héritée"
 
 #: editor/editor_node.cpp
 msgid "Load Errors"
@@ -3780,6 +3787,13 @@ msgstr ""
 "le réimporter manuellement."
 
 #: editor/filesystem_dock.cpp
+msgid ""
+"Importing has been disabled for this file, so it can't be opened for editing."
+msgstr ""
+"L'importation a été désactivée pour ce fichier, il ne peut donc pas être "
+"ouvert dans l'éditeur."
+
+#: editor/filesystem_dock.cpp
 msgid "Cannot move/rename resources root."
 msgstr "Impossible de déplacer / renommer les ressources root."
 
@@ -4168,17 +4182,33 @@ msgstr ""
 msgid "Saving..."
 msgstr "Enregistrement…"
 
+#: editor/import_defaults_editor.cpp
+msgid "Select Importer"
+msgstr "Sélectionnez un importeur"
+
+#: editor/import_defaults_editor.cpp
+msgid "Importer:"
+msgstr "Importeur :"
+
+#: editor/import_defaults_editor.cpp
+msgid "Reset to Defaults"
+msgstr "Réinitialiser"
+
+#: editor/import_dock.cpp
+msgid "Keep File (No Import)"
+msgstr "Conserver le fichier (non importé)"
+
 #: editor/import_dock.cpp
 msgid "%d Files"
 msgstr "%d fichiers"
 
 #: editor/import_dock.cpp
 msgid "Set as Default for '%s'"
-msgstr "Définir comme défaut pour « %s »"
+msgstr "Définir comme préréglage pour « %s »"
 
 #: editor/import_dock.cpp
 msgid "Clear Default for '%s'"
-msgstr "Effacer le préréglage par défaut pour « %s »"
+msgstr "Effacer le préréglage pour « %s »"
 
 #: editor/import_dock.cpp
 msgid "Import As:"
@@ -4186,7 +4216,7 @@ msgstr "Importer comme :"
 
 #: editor/import_dock.cpp
 msgid "Preset"
-msgstr "Pré-réglage"
+msgstr "Préréglage"
 
 #: editor/import_dock.cpp
 msgid "Reimport"
@@ -5247,7 +5277,6 @@ msgid "Sort:"
 msgstr "Trier :"
 
 #: editor/plugins/asset_library_editor_plugin.cpp
-#: editor/project_settings_editor.cpp
 msgid "Category:"
 msgstr "Catégorie :"
 
@@ -5316,7 +5345,7 @@ msgid ""
 "Godot editor was built without ray tracing support, lightmaps can't be baked."
 msgstr ""
 "L'éditeur Godot a été compilé sans support du ray tracing, les lightmaps ne "
-"peuvent pas être pré-calculées."
+"peuvent pas être précalculées."
 
 #: editor/plugins/baked_lightmap_editor_plugin.cpp
 msgid "Bake Lightmaps"
@@ -5324,7 +5353,7 @@ msgstr "Précalculer les lightmaps"
 
 #: editor/plugins/baked_lightmap_editor_plugin.cpp
 msgid "Select lightmap bake file:"
-msgstr "Sélectionnez le fichier de pré-calcul de lightmap :"
+msgstr "Sélectionnez le fichier de précalcul de lightmap :"
 
 #: editor/plugins/camera_editor_plugin.cpp
 #: editor/plugins/spatial_editor_plugin.cpp
@@ -6030,7 +6059,7 @@ msgstr "Modifier la tangente de courbes"
 
 #: editor/plugins/curve_editor_plugin.cpp
 msgid "Load Curve Preset"
-msgstr "Charger un pré-réglage de courbe"
+msgstr "Charger un préréglage de courbe"
 
 #: editor/plugins/curve_editor_plugin.cpp
 msgid "Add Point"
@@ -6294,7 +6323,7 @@ msgstr ""
 
 #: editor/plugins/mesh_library_editor_plugin.cpp
 msgid "Mesh Library"
-msgstr "Mesh Library"
+msgstr "Librairie de maillages"
 
 #: editor/plugins/mesh_library_editor_plugin.cpp
 #: editor/plugins/theme_editor_plugin.cpp
@@ -7371,7 +7400,7 @@ msgstr ""
 
 #: editor/plugins/shader_editor_plugin.cpp
 msgid "Shader"
-msgstr "Shader"
+msgstr "Ombrage"
 
 #: editor/plugins/skeleton_2d_editor_plugin.cpp
 msgid "This skeleton has no bones, create some children Bone2D nodes."
@@ -7654,6 +7683,13 @@ msgstr "Ralentissement de la vue libre"
 #: editor/plugins/spatial_editor_plugin.cpp
 msgid "View Rotation Locked"
 msgstr "Rotation de la vue verrouillée"
+
+#: editor/plugins/spatial_editor_plugin.cpp
+msgid ""
+"To zoom further, change the camera's clipping planes (View -> Settings...)"
+msgstr ""
+"Pour zoomer d'avantage, modifiez les plans de détourage de la caméra "
+"(Affichage -> Paramètres...)"
 
 #: editor/plugins/spatial_editor_plugin.cpp
 msgid ""
@@ -9700,7 +9736,7 @@ msgstr "Exécutable"
 
 #: editor/project_export.cpp
 msgid "Delete preset '%s'?"
-msgstr "Supprimer le pré-réglage « %s » ?"
+msgstr "Supprimer le préréglage « %s » ?"
 
 #: editor/project_export.cpp
 msgid ""
@@ -9738,7 +9774,7 @@ msgstr "Modèles d'exportation manquants ou corrompus pour cette plateforme :"
 
 #: editor/project_export.cpp
 msgid "Presets"
-msgstr "Pré-réglages"
+msgstr "Préréglages"
 
 #: editor/project_export.cpp editor/project_settings_editor.cpp
 msgid "Add..."
@@ -9749,9 +9785,9 @@ msgid ""
 "If checked, the preset will be available for use in one-click deploy.\n"
 "Only one preset per platform may be marked as runnable."
 msgstr ""
-"Si cette option est activée, le pré-réglage sera disponible pour le "
+"Si cette option est activée, le préréglage sera disponible pour le "
 "déploiement en un clic.\n"
-"Un seul pré-réglage par plateforme peut être marqué comme exécutable."
+"Un seul préréglage par plateforme peut être marqué comme exécutable."
 
 #: editor/project_export.cpp
 msgid "Export Path"
@@ -10249,7 +10285,7 @@ msgstr "Bouton de souris"
 
 #: editor/project_settings_editor.cpp
 msgid ""
-"Invalid action name. it cannot be empty nor contain '/', ':', '=', '\\' or "
+"Invalid action name. It cannot be empty nor contain '/', ':', '=', '\\' or "
 "'\"'"
 msgstr ""
 "Nom d'action invalide. Il ne peut être vide ni contenir « / », « : », « = », "
@@ -10551,9 +10587,13 @@ msgstr "AutoLoad"
 msgid "Plugins"
 msgstr "Extensions"
 
+#: editor/project_settings_editor.cpp
+msgid "Import Defaults"
+msgstr "Préréglage des importeurs"
+
 #: editor/property_editor.cpp
 msgid "Preset..."
-msgstr "Pré-réglage…"
+msgstr "Préréglage…"
 
 #: editor/property_editor.cpp
 msgid "Zero"
@@ -11051,6 +11091,17 @@ msgstr "Détacher le script du nœud sélectionné."
 #: editor/scene_tree_dock.cpp
 msgid "Remote"
 msgstr "Distant"
+
+#: editor/scene_tree_dock.cpp
+msgid ""
+"If selected, the Remote scene tree dock will cause the project to stutter "
+"every time it updates.\n"
+"Switch back to the Local scene tree dock to improve performance."
+msgstr ""
+"S'il est sélectionné, le dock de l'arborescence de la scène distante sera "
+"instable à chaque mise à jour de celui-ci.\n"
+"Revenez au dock de l'arborescence de la scène locale afin d'améliorer les "
+"performances."
 
 #: editor/scene_tree_dock.cpp
 msgid "Local"
@@ -11752,7 +11803,7 @@ msgstr ""
 
 #: modules/lightmapper_cpu/lightmapper_cpu.cpp
 msgid "Begin Bake"
-msgstr "Commencer le pré-calcul"
+msgstr "Commencer le précalcul"
 
 #: modules/lightmapper_cpu/lightmapper_cpu.cpp
 msgid "Preparing data structures"
@@ -12090,10 +12141,6 @@ msgid "Can't copy the function node."
 msgstr "Impossible de copier le nœud de fonction."
 
 #: modules/visual_script/visual_script_editor.cpp
-msgid "Clipboard is empty!"
-msgstr "Le presse-papiers est vide !"
-
-#: modules/visual_script/visual_script_editor.cpp
 msgid "Paste VisualScript Nodes"
 msgstr "Coller les nœuds VisualScript"
 
@@ -12311,10 +12358,26 @@ msgstr ""
 "Installez-le à partir du menu Projet."
 
 #: platform/android/export/export.cpp
+msgid ""
+"Either Debug Keystore, Debug User AND Debug Password settings must be "
+"configured OR none of them."
+msgstr ""
+"Il faut configurer soit les paramètres Debug Keystore, Debug User ET Debug "
+"Password, soit aucun d'entre eux."
+
+#: platform/android/export/export.cpp
 msgid "Debug keystore not configured in the Editor Settings nor in the preset."
 msgstr ""
 "Le Debug keystore n'est pas configuré dans les Paramètres de l'éditeur, ni "
 "dans le préréglage."
+
+#: platform/android/export/export.cpp
+msgid ""
+"Either Release Keystore, Release User AND Release Password settings must be "
+"configured OR none of them."
+msgstr ""
+"Il faut configurer soit les paramètres Release Keystore, Release User ET "
+"Release Password, soit aucun d'entre eux."
 
 #: platform/android/export/export.cpp
 msgid "Release keystore incorrectly configured in the export preset."
@@ -12630,6 +12693,18 @@ msgstr ""
 #: scene/2d/collision_polygon_2d.cpp
 msgid "An empty CollisionPolygon2D has no effect on collision."
 msgstr "Un CollisionPolygon2D vide n'a pas d'effet sur les collisions."
+
+#: scene/2d/collision_polygon_2d.cpp
+msgid "Invalid polygon. At least 3 points are needed in 'Solids' build mode."
+msgstr ""
+"Polygone non valide. Il doit avoir au moins trois points en mode de "
+"construction 'Solide'."
+
+#: scene/2d/collision_polygon_2d.cpp
+msgid "Invalid polygon. At least 2 points are needed in 'Segments' build mode."
+msgstr ""
+"Polygone non valide. Il doit y avoir au moins 2 points en mode de "
+"construction 'Segments'."
 
 #: scene/2d/collision_shape_2d.cpp
 msgid ""
@@ -12955,11 +13030,6 @@ msgstr ""
 "Les GIProps ne sont pas supporter par le pilote de vidéos GLES2.\n"
 "A la place utilisez une BakedLightMap."
 
-#: scene/3d/interpolated_camera.cpp
-msgid ""
-"InterpolatedCamera has been deprecated and will be removed in Godot 4.0."
-msgstr "InterpolatedCamera a été déprécié et sera supprimé dans Godot 4.0."
-
 #: scene/3d/light.cpp
 msgid "A SpotLight with an angle wider than 90 degrees cannot cast shadows."
 msgstr ""
@@ -13163,7 +13233,7 @@ msgid ""
 msgstr ""
 "Couleur : #%s\n"
 "Clic gauche : Définir la couleur\n"
-"Clic droit : Supprimer le pré-réglage"
+"Clic droit : Supprimer le préréglage"
 
 #: scene/gui/color_picker.cpp
 msgid "Pick a color from the editor window."
@@ -13183,7 +13253,7 @@ msgstr "Alterner entre les valeurs hexadécimales ou brutes."
 
 #: scene/gui/color_picker.cpp
 msgid "Add current color as a preset."
-msgstr "Ajouter la couleur courante comme pré-réglage."
+msgstr "Ajouter la couleur courante comme préréglage."
 
 #: scene/gui/container.cpp
 msgid ""
@@ -13312,6 +13382,18 @@ msgstr "Les variations ne peuvent être affectées que dans la fonction vertex."
 #: servers/visual/shader_language.cpp
 msgid "Constants cannot be modified."
 msgstr "Les constantes ne peuvent être modifiées."
+
+#~ msgid "An animation player can't animate itself, only other players."
+#~ msgstr ""
+#~ "Un lecteur d’animation ne peut s’animer lui-même, seulement les autres "
+#~ "lecteurs."
+
+#~ msgid "Clipboard is empty"
+#~ msgstr "Le presse-papiers est vide"
+
+#~ msgid ""
+#~ "InterpolatedCamera has been deprecated and will be removed in Godot 4.0."
+#~ msgstr "InterpolatedCamera a été déprécié et sera supprimé dans Godot 4.0."
 
 #~ msgid "No"
 #~ msgstr "Non"

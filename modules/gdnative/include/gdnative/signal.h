@@ -37,6 +37,7 @@ extern "C" {
 
 #include <stdint.h>
 
+// Alignment hardcoded in `core/variant/callable.h`.
 #define GODOT_SIGNAL_SIZE (16)
 
 #ifndef GODOT_CORE_API_GODOT_SIGNAL_TYPE_DEFINED
@@ -49,6 +50,7 @@ typedef struct {
 #include <gdnative/gdnative.h>
 
 void GDAPI godot_signal_new(godot_signal *p_self);
+void GDAPI godot_signal_new_copy(godot_signal *r_dest, const godot_signal *p_src);
 void GDAPI godot_signal_destroy(godot_signal *p_self);
 
 #ifdef __cplusplus

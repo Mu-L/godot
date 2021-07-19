@@ -38,6 +38,7 @@ bool JavaClass::_call_method(JavaObject *p_instance, const StringName &p_method,
 		return false;
 
 	JNIEnv *env = get_jni_env();
+	ERR_FAIL_COND_V(env == nullptr, false);
 
 	MethodInfo *method = nullptr;
 	for (List<MethodInfo>::Element *E = M->get().front(); E; E = E->next()) {
@@ -101,7 +102,7 @@ bool JavaClass::_call_method(JavaObject *p_instance, const StringName &p_method,
 					if (p_args[i]->get_type() != Variant::OBJECT)
 						arg_expected = Variant::OBJECT;
 					else {
-						Ref<Reference> ref = *p_args[i];
+						Ref<RefCounted> ref = *p_args[i];
 						if (!ref.is_null()) {
 							if (Object::cast_to<JavaObject>(ref.ptr())) {
 								Ref<JavaObject> jo = ref;
@@ -487,7 +488,7 @@ Variant JavaClass::call(const StringName &p_method, const Variant **p_args, int 
 		return ret;
 	}
 
-	return Reference::call(p_method, p_args, p_argcount, r_error);
+	return RefCounted::call(p_method, p_args, p_argcount, r_error);
 }
 
 JavaClass::JavaClass() {
@@ -965,6 +966,7 @@ Ref<JavaClass> JavaClassWrapper::wrap(const String &p_class) {
 		return class_cache[p_class];
 
 	JNIEnv *env = get_jni_env();
+	ERR_FAIL_COND_V(env == nullptr, Ref<JavaClass>());
 
 	jclass bclass = env->FindClass(p_class.utf8().get_data());
 	ERR_FAIL_COND_V(!bclass, Ref<JavaClass>());
@@ -1149,6 +1151,7 @@ JavaClassWrapper::JavaClassWrapper(jobject p_activity) {
 	singleton = this;
 
 	JNIEnv *env = get_jni_env();
+	ERR_FAIL_COND(env == nullptr);
 
 	jclass activityClass = env->FindClass("android/app/Activity");
 	jmethodID getClassLoader = env->GetMethodID(activityClass, "getClassLoader", "()Ljava/lang/ClassLoader;");

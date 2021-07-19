@@ -41,7 +41,7 @@ bool ConvexPolygonShape2D::_edit_is_selected_on_click(const Point2 &p_point, dou
 void ConvexPolygonShape2D::_update_shape() {
 	Vector<Vector2> final_points = points;
 	if (Geometry2D::is_polygon_clockwise(final_points)) { //needs to be counter clockwise
-		final_points.invert();
+		final_points.reverse();
 	}
 	PhysicsServer2D::get_singleton()->shape_set_data(get_rid(), final_points);
 	emit_changed();
@@ -72,12 +72,18 @@ void ConvexPolygonShape2D::_bind_methods() {
 }
 
 void ConvexPolygonShape2D::draw(const RID &p_to_rid, const Color &p_color) {
+	if (points.size() < 3) {
+		return;
+	}
+
 	Vector<Color> col;
 	col.push_back(p_color);
 	RenderingServer::get_singleton()->canvas_item_add_polygon(p_to_rid, points, col);
-	RenderingServer::get_singleton()->canvas_item_add_polyline(p_to_rid, points, col);
-	// Draw the last segment as it's not drawn by `canvas_item_add_polyline()`.
-	RenderingServer::get_singleton()->canvas_item_add_line(p_to_rid, points[points.size() - 1], points[0], p_color);
+	if (is_collision_outline_enabled()) {
+		RenderingServer::get_singleton()->canvas_item_add_polyline(p_to_rid, points, col);
+		// Draw the last segment as it's not drawn by `canvas_item_add_polyline()`.
+		RenderingServer::get_singleton()->canvas_item_add_line(p_to_rid, points[points.size() - 1], points[0], p_color);
+	}
 }
 
 Rect2 ConvexPolygonShape2D::get_rect() const {

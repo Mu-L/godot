@@ -32,7 +32,7 @@
 #define FILE_DIALOG_H
 
 #include "box_container.h"
-#include "core/os/dir_access.h"
+#include "core/io/dir_access.h"
 #include "scene/gui/dialogs.h"
 #include "scene/gui/line_edit.h"
 #include "scene/gui/option_button.h"
@@ -86,12 +86,20 @@ private:
 	DirAccess *dir_access;
 	ConfirmationDialog *confirm_save;
 
+	Label *message;
+
+	Button *dir_prev;
+	Button *dir_next;
 	Button *dir_up;
 
 	Button *refresh;
 	Button *show_hidden;
 
 	Vector<String> filters;
+
+	Vector<String> local_history;
+	int local_history_pos = 0;
+	void _push_history();
 
 	bool mode_overrides_title = true;
 
@@ -110,8 +118,8 @@ private:
 
 	void _select_drive(int p_idx);
 	void _tree_item_activated();
-	void _dir_entered(String p_dir);
-	void _file_entered(const String &p_file);
+	void _dir_submitted(String p_dir);
+	void _file_submitted(const String &p_file);
 	void _action_pressed();
 	void _save_confirm_pressed();
 	void _cancel_pressed();
@@ -119,6 +127,8 @@ private:
 	void _make_dir();
 	void _make_dir_confirm();
 	void _go_up();
+	void _go_back();
+	void _go_forward();
 
 	void _update_drives();
 

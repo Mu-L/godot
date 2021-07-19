@@ -31,9 +31,9 @@
 #include "editor_data.h"
 
 #include "core/config/project_settings.h"
+#include "core/io/dir_access.h"
+#include "core/io/file_access.h"
 #include "core/io/resource_loader.h"
-#include "core/os/dir_access.h"
-#include "core/os/file_access.h"
 #include "editor_node.h"
 #include "editor_settings.h"
 #include "scene/resources/packed_scene.h"
@@ -83,7 +83,7 @@ void EditorHistory::cleanup_history() {
 void EditorHistory::_add_object(ObjectID p_object, const String &p_property, int p_level_change, bool p_inspector_only) {
 	Object *obj = ObjectDB::get_instance(p_object);
 	ERR_FAIL_COND(!obj);
-	Reference *r = Object::cast_to<Reference>(obj);
+	RefCounted *r = Object::cast_to<RefCounted>(obj);
 	Obj o;
 	if (r) {
 		o.ref = REF(r);
@@ -426,6 +426,18 @@ UndoRedo &EditorData::get_undo_redo() {
 	return undo_redo;
 }
 
+void EditorData::add_undo_redo_inspector_hook_callback(Callable p_callable) {
+	undo_redo_callbacks.push_back(p_callable);
+}
+
+void EditorData::remove_undo_redo_inspector_hook_callback(Callable p_callable) {
+	undo_redo_callbacks.erase(p_callable);
+}
+
+const Vector<Callable> EditorData::get_undo_redo_inspector_hook_callback() {
+	return undo_redo_callbacks;
+}
+
 void EditorData::remove_editor_plugin(EditorPlugin *p_plugin) {
 	p_plugin->undo_redo = nullptr;
 	editor_plugins.erase(p_plugin);
@@ -464,7 +476,7 @@ Variant EditorData::instance_custom_type(const String &p_type, const String &p_i
 			if (get_custom_types()[p_inherits][i].name == p_type) {
 				Ref<Script> script = get_custom_types()[p_inherits][i].script;
 
-				Variant ob = ClassDB::instance(p_inherits);
+				Variant ob = ClassDB::instantiate(p_inherits);
 				ERR_FAIL_COND_V(!ob, Variant());
 				Node *n = Object::cast_to<Node>(ob);
 				if (n) {
@@ -591,7 +603,7 @@ bool EditorData::check_and_update_scene(int p_idx) {
 
 	if (must_reload) {
 		Ref<PackedScene> pscene;
-		pscene.instance();
+		pscene.instantiate();
 
 		EditorProgress ep("update_scene", TTR("Updating Scene"), 2);
 		ep.step(TTR("Storing local changes..."), 0);
@@ -599,7 +611,7 @@ bool EditorData::check_and_update_scene(int p_idx) {
 		Error err = pscene->pack(edited_scene[p_idx].root);
 		ERR_FAIL_COND_V(err != OK, false);
 		ep.step(TTR("Updating scene..."), 1);
-		Node *new_scene = pscene->instance(PackedScene::GEN_EDIT_STATE_MAIN);
+		Node *new_scene = pscene->instantiate(PackedScene::GEN_EDIT_STATE_MAIN);
 		ERR_FAIL_COND_V(!new_scene, false);
 
 		//transfer selection
@@ -741,7 +753,7 @@ Ref<Script> EditorData::get_scene_root_script(int p_idx) const {
 	return s;
 }
 
-String EditorData::get_scene_title(int p_idx) const {
+String EditorData::get_scene_title(int p_idx, bool p_always_strip_extension) const {
 	ERR_FAIL_INDEX_V(p_idx, edited_scene.size(), String());
 	if (!edited_scene[p_idx].root) {
 		return TTR("[empty]");
@@ -749,12 +761,28 @@ String EditorData::get_scene_title(int p_idx) const {
 	if (edited_scene[p_idx].root->get_filename() == "") {
 		return TTR("[unsaved]");
 	}
-	bool show_ext = EDITOR_DEF("interface/scene_tabs/show_extension", false);
-	String name = edited_scene[p_idx].root->get_filename().get_file();
-	if (!show_ext) {
-		name = name.get_basename();
+
+	const String filename = edited_scene[p_idx].root->get_filename().get_file();
+	const String basename = filename.get_basename();
+
+	if (p_always_strip_extension) {
+		return basename;
 	}
-	return name;
+
+	// Return the filename including the extension if there's ambiguity (e.g. both `foo.tscn` and `foo.scn` are being edited).
+	for (int i = 0; i < edited_scene.size(); i++) {
+		if (i == p_idx) {
+			// Don't compare the edited scene against itself.
+			continue;
+		}
+
+		if (edited_scene[i].root && basename == edited_scene[i].root->get_filename().get_file().get_basename()) {
+			return filename;
+		}
+	}
+
+	// Else, return just the basename as there's no ambiguity.
+	return basename;
 }
 
 void EditorData::set_scene_path(int p_idx, const String &p_path) {
@@ -880,7 +908,7 @@ StringName EditorData::script_class_get_base(const String &p_class) const {
 
 Variant EditorData::script_class_instance(const String &p_class) {
 	if (ScriptServer::is_global_class(p_class)) {
-		Variant obj = ClassDB::instance(ScriptServer::get_global_class_native_base(p_class));
+		Variant obj = ClassDB::instantiate(ScriptServer::get_global_class_native_base(p_class));
 		if (obj) {
 			Ref<Script> script = script_class_load_script(p_class);
 			if (script.is_valid()) {
@@ -1020,7 +1048,7 @@ void EditorSelection::add_node(Node *p_node) {
 
 	p_node->connect("tree_exiting", callable_mp(this, &EditorSelection::_node_removed), varray(p_node), CONNECT_ONESHOT);
 
-	//emit_signal("selection_changed");
+	//emit_signal(SNAME("selection_changed"));
 }
 
 void EditorSelection::remove_node(Node *p_node) {
@@ -1038,7 +1066,7 @@ void EditorSelection::remove_node(Node *p_node) {
 	}
 	selection.erase(p_node);
 	p_node->disconnect("tree_exiting", callable_mp(this, &EditorSelection::_node_removed));
-	//emit_signal("selection_changed");
+	//emit_signal(SNAME("selection_changed"));
 }
 
 bool EditorSelection::is_selected(Node *p_node) const {
@@ -1116,12 +1144,12 @@ void EditorSelection::update() {
 	changed = false;
 	if (!emitted) {
 		emitted = true;
-		call_deferred("_emit_change");
+		call_deferred(SNAME("_emit_change"));
 	}
 }
 
 void EditorSelection::_emit_change() {
-	emit_signal("selection_changed");
+	emit_signal(SNAME("selection_changed"));
 	emitted = false;
 }
 

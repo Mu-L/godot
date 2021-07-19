@@ -60,7 +60,7 @@
 		<member name="buffering_msec" type="int" setter="set_buffering_msec" getter="get_buffering_msec" default="500">
 			Amount of time in milliseconds to store in buffer while playing.
 		</member>
-		<member name="bus" type="StringName" setter="set_bus" getter="get_bus" default="@&quot;Master&quot;">
+		<member name="bus" type="StringName" setter="set_bus" getter="get_bus" default="&amp;&quot;Master&quot;">
 			Audio bus to use for sound playback.
 		</member>
 		<member name="expand" type="bool" setter="set_expand" getter="has_expand" default="true">
@@ -74,6 +74,7 @@
 		</member>
 		<member name="stream_position" type="float" setter="set_stream_position" getter="get_stream_position">
 			The current position of the stream, in seconds.
+			[b]Note:[/b] Changing this value won't have any effect as seeking is not implemented yet, except in video formats implemented by a GDNative add-on.
 		</member>
 		<member name="volume" type="float" setter="set_volume" getter="get_volume">
 			Audio volume as a linear value.

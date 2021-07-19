@@ -189,6 +189,8 @@ String TouchScreenButton::get_action() const {
 }
 
 void TouchScreenButton::_input(const Ref<InputEvent> &p_event) {
+	ERR_FAIL_COND(p_event.is_null());
+
 	if (!get_tree()) {
 		return;
 	}
@@ -286,13 +288,13 @@ void TouchScreenButton::_press(int p_finger_pressed) {
 	if (action != StringName()) {
 		Input::get_singleton()->action_press(action);
 		Ref<InputEventAction> iea;
-		iea.instance();
+		iea.instantiate();
 		iea->set_action(action);
 		iea->set_pressed(true);
 		get_viewport()->input(iea, true);
 	}
 
-	emit_signal("pressed");
+	emit_signal(SNAME("pressed"));
 	update();
 }
 
@@ -303,7 +305,7 @@ void TouchScreenButton::_release(bool p_exiting_tree) {
 		Input::get_singleton()->action_release(action);
 		if (!p_exiting_tree) {
 			Ref<InputEventAction> iea;
-			iea.instance();
+			iea.instantiate();
 			iea->set_action(action);
 			iea->set_pressed(false);
 			get_viewport()->input(iea, true);
@@ -311,7 +313,7 @@ void TouchScreenButton::_release(bool p_exiting_tree) {
 	}
 
 	if (!p_exiting_tree) {
-		emit_signal("released");
+		emit_signal(SNAME("released"));
 		update();
 	}
 }

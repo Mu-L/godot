@@ -43,7 +43,7 @@ void EditorFileServer::_close_client(ClientData *cd) {
 	cd->connection->disconnect_from_host();
 	{
 		MutexLock lock(cd->efs->wait_mutex);
-		cd->efs->to_wait.insert(&cd->thread);
+		cd->efs->to_wait.insert(cd->thread);
 	}
 	while (cd->files.size()) {
 		memdelete(cd->files.front()->get());
@@ -200,7 +200,7 @@ void EditorFileServer::_subthread_start(void *s) {
 				cd->connection->put_data(buf4, 4);
 				encode_uint32(OK, buf4);
 				cd->connection->put_data(buf4, 4);
-				encode_uint64(fa->get_len(), buf4);
+				encode_uint64(fa->get_length(), buf4);
 				cd->connection->put_data(buf4, 8);
 
 				cd->files[id] = fa;
@@ -230,8 +230,7 @@ void EditorFileServer::_subthread_start(void *s) {
 				cd->files[id]->seek(offset);
 				Vector<uint8_t> buf;
 				buf.resize(blocklen);
-				int read = cd->files[id]->get_buffer(buf.ptrw(), blocklen);
-				ERR_CONTINUE(read < 0);
+				uint32_t read = cd->files[id]->get_buffer(buf.ptrw(), blocklen);
 
 				print_verbose("GET BLOCK - offset: " + itos(offset) + ", blocklen: " + itos(blocklen));
 
@@ -278,7 +277,8 @@ void EditorFileServer::_thread_start(void *s) {
 				cd->connection = self->server->take_connection();
 				cd->efs = self;
 				cd->quit = false;
-				cd->thread.start(_subthread_start, cd);
+				cd->thread = memnew(Thread);
+				cd->thread->start(_subthread_start, cd);
 			}
 		}
 
@@ -312,7 +312,7 @@ void EditorFileServer::stop() {
 }
 
 EditorFileServer::EditorFileServer() {
-	server.instance();
+	server.instantiate();
 	quit = false;
 	active = false;
 	cmd = CMD_NONE;

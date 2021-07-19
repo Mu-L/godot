@@ -121,7 +121,6 @@ void StyleBoxTexture::set_texture(Ref<Texture2D> p_texture) {
 	} else {
 		region_rect = Rect2(Point2(), texture->get_size());
 	}
-	emit_signal("texture_changed");
 	emit_changed();
 }
 
@@ -284,8 +283,6 @@ void StyleBoxTexture::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("set_v_axis_stretch_mode", "mode"), &StyleBoxTexture::set_v_axis_stretch_mode);
 	ClassDB::bind_method(D_METHOD("get_v_axis_stretch_mode"), &StyleBoxTexture::get_v_axis_stretch_mode);
-
-	ADD_SIGNAL(MethodInfo("texture_changed"));
 
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "texture", PROPERTY_HINT_RESOURCE_TYPE, "Texture2D"), "set_texture", "get_texture");
 	ADD_PROPERTY(PropertyInfo(Variant::RECT2, "region_rect"), "set_region_rect", "get_region_rect");
@@ -460,6 +457,7 @@ Point2 StyleBoxFlat::get_shadow_offset() const {
 void StyleBoxFlat::set_anti_aliased(const bool &p_anti_aliased) {
 	anti_aliased = p_anti_aliased;
 	emit_changed();
+	notify_property_list_changed();
 }
 
 bool StyleBoxFlat::is_anti_aliased() const {
@@ -779,6 +777,12 @@ void StyleBoxFlat::draw(RID p_canvas_item, const Rect2 &p_rect) const {
 float StyleBoxFlat::get_style_margin(Side p_side) const {
 	ERR_FAIL_INDEX_V((int)p_side, 4, 0.0);
 	return border_width[p_side];
+}
+
+void StyleBoxFlat::_validate_property(PropertyInfo &property) const {
+	if (!anti_aliased && property.name == "anti_aliasing_size") {
+		property.usage = PROPERTY_USAGE_NOEDITOR;
+	}
 }
 
 void StyleBoxFlat::_bind_methods() {

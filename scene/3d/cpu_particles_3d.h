@@ -83,7 +83,7 @@ private:
 	bool emitting = false;
 
 	struct Particle {
-		Transform transform;
+		Transform3D transform;
 		Color color;
 		float custom[4] = {};
 		Vector3 velocity;
@@ -141,7 +141,7 @@ private:
 	int fixed_fps = 0;
 	bool fractional_delta = true;
 
-	Transform inv_emission_transform;
+	Transform3D inv_emission_transform;
 
 	SafeFlag can_update;
 
@@ -280,7 +280,7 @@ public:
 	void set_gravity(const Vector3 &p_gravity);
 	Vector3 get_gravity() const;
 
-	virtual String get_configuration_warning() const override;
+	TypedArray<String> get_configuration_warnings() const override;
 
 	void restart();
 
